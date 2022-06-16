@@ -9,11 +9,47 @@ import matplotlib.pyplot as plt
 from functools import reduce
 import torchvision.transforms as T
 
-from model import discriminator, generative
+from model import discriminator, generative, Comparator
 
 flatten = lambda z: reduce(lambda x, y: list(x) + list(y), z)
 
 sigmoid = nn.Sigmoid()
+
+comparator = Comparator()
+
+
+def train_comparator(cloud, clear, opt_d, loss):
+    opt_d.zero_grad()
+
+    real_preds = comparator(torch.Tensor(clear, clear))
+    real_targets = torch.ones(clear.size(0), 1)
+    real_loss = loss(sigmoid(real_preds), real_targets)
+    real_score = torch.mean(real_preds).item()
+
+    fake_clear = generative(cloud)
+    fake_preds = comparator(torch.Tensor(fake_clear, clear))
+    fake_targets = torch.zeros(fake_clear.size(0), 1)
+    fake_loss = loss(sigmoid(fake_preds), fake_targets)
+    fake_score = torch.mean(fake_preds).item()
+
+    loss = real_loss + fake_loss
+    disc_loss = loss.item()
+    loss.backward()
+    opt_d.step()
+    return disc_loss, real_score, fake_score
+
+
+def train_generator_comparison(cloud, clear, opt_g, loss):
+    opt_g.zero_grad()
+
+    fake_imgs = generative(cloud)
+    disc_preds = comparator(torch.Tensor(fake_imgs, clear))
+    fake_targets = torch.ones(cloud.size(0), 1)
+    loss = loss(disc_preds, fake_targets)
+    gen_loss = loss.item()
+    loss.backward()
+    opt_g.step()
+    return gen_loss
 
 
 def train_discriminator(cloud, clear, opt_d, loss):
@@ -95,14 +131,12 @@ def write_imgs(writer, batch_clouds, epoch, generative):
     clouds_axes = axes[:, :4]
     clear_axes = axes[:, 4:]
     for ax, arr_cloud in zip(flatten(clouds_axes), batch_clouds):
-        arr_cloud = np.transpose(arr_cloud.detach().numpy(), (1,2,0)).astype(np.uint8)
-        print(arr_cloud.shape)
+        arr_cloud = np.transpose(arr_cloud.detach().numpy(), (1, 2, 0)).astype(np.uint8)
         ax.imshow(arr_cloud)
         ax.axis(False)
     fake_clear = generative(torch.Tensor(batch_clouds)).detach().numpy()
     for ax, fake in zip(flatten(clear_axes), fake_clear):
-        fake = (np.transpose(fake, (1,2,0)) * 255 ).astype(np.uint8)
-        print(fake)
+        fake = (np.transpose(fake, (1, 2, 0)) * 255).astype(np.uint8)
         ax.imshow(fake)
         ax.axis(False)
     plt.tight_layout(pad=0)
@@ -118,7 +152,7 @@ def main(epochs=10000, lr=0.0002, beta1=0.5):
 
     dataloader = get_loader(clear, clouds)
 
-    opt_d = optim.Adam(discriminator.parameters(), lr=lr, betas=(beta1, 0.999))
+    opt_d = optim.Adam(discriminator.parameters(), lr=lr * 0.1, betas=(beta1, 0.999))
     opt_g = optim.Adam(generative.parameters(), lr=lr, betas=(beta1, 0.999))
 
     train(epochs, dataloader, opt_d, opt_g, batch_clouds)
@@ -131,12 +165,12 @@ def get_loader(clear, clouds):
 
 
 def get_clear():
-    clear = torch.Tensor(np.load('../data/crops/val_clear2.npy'))
+    clear = torch.Tensor(np.load('../data/crops/val_clear3.npy'))
     return clear
 
 
 def get_clouds():
-    clouds = torch.Tensor(np.load('../data/crops/val_clouds2.npy'))
+    clouds = torch.Tensor(np.load('../data/crops/val_clouds3.npy'))
     return clouds
 
 

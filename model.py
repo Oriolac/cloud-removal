@@ -42,11 +42,40 @@ discriminator = nn.Sequential(
 
 class Comparator(nn.Module):
 
+    def __init__(self):
+        super().__init__()
+        self.encoderA = self.block()
+        self.encoderB = self.block()
+        self.fc1 = self.leaky_linear(2048 * 2, 2048)
+        self.fc2 = self.leaky_linear(2048, 1024)
+        self.fc3 = self.leaky_linear(1024, 1)
+        self.sigmoid = nn.Sigmoid()
+
+    def leaky_linear(self, _in, _out):
+        return nn.Sequential(nn.Linear(_in, _out), nn.LeakyReLU(0.2, inplace=True))
+
+    def block(self):
+        input = 3
+        res = []
+        for output in [32, 64, 128, 256, 512, 1024]:
+            res.append(self.reduction_layer(input, output))
+            input = output
+        return nn.Sequential(*res, nn.Conv2d(1024, 2048, kernel_size=4, stride=2, padding=0, bias=False), nn.Flatten())
+
     def reduction_layer(self, input, output):
         return nn.Sequential(
             nn.Conv2d(input, output, kernel_size=4, stride=2, padding=1, bias=False),
             nn.BatchNorm2d(output),
             nn.LeakyReLU(0.2, inplace=True), )
+
+    def forward(self, x):
+        a = self.encoderA(x[0])
+        b = self.encoderB(x[1])
+        x = torch.cat((a, b), 0)
+        x = self.fc1(x)
+        x = self.fc2(x)
+        x = self.fc3(x)
+        return self.sigmoid(x)
 
 
 generative = nn.Sequential(
@@ -85,4 +114,34 @@ generative = nn.Sequential(
     nn.ReLU(True),
     nn.Conv2d(32, 3, kernel_size=3, stride=1, padding=1, bias=False),
     nn.Tanh()
+)
+
+
+def reduction_layer(input, output):
+    return nn.Sequential(
+        nn.Conv2d(input, output, kernel_size=4, stride=2, padding=1, bias=False),
+        nn.BatchNorm2d(output),
+        nn.ReLU(True)
+    )
+
+
+def augmentation_layer(input, output):
+    return nn.Sequential(
+        nn.ConvTranspose2d(input, output, kernel_size=4, stride=2, padding=1, bias=False),
+        nn.BatchNorm2d(output),
+        nn.ReLU(True)
+    )
+
+
+autoencoderCNN = nn.Sequential(
+    reduction_layer(3, 16),  # 16 x 112 x 112
+    reduction_layer(16, 32),  # 32 x 56 x 56
+    reduction_layer(32, 64),  # 64x 28 x 28
+    reduction_layer(64, 128),  # 128 x 14 x 14
+    reduction_layer(128, 256),  # 256 x 7 x 7
+    augmentation_layer(256, 128),  # 128 x 14 x 14
+    augmentation_layer(128, 64), # 64 x 28 x 28
+    augmentation_layer(64, 32), # 32 x 56 x 56
+    augmentation_layer(32, 16), # 16 x 112 x 112
+    augmentation_layer(16, 3) # 3 x 224 x 224
 )
