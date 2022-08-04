@@ -1,0 +1,256 @@
+% !TeX spellcheck = en_US
+\documentclass[11pt, a4paper]{article}
+\usepackage[utf8]{inputenc}
+
+\usepackage{latexsym}
+\usepackage{float}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{microtype}
+\usepackage[hyphens]{url}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{makeidx}
+\usepackage{datetime}
+\usepackage{multicol}
+\usepackage{setspace}
+\usepackage{pdflscape}
+\usepackage{pgffor}
+\usepackage{enumerate}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{braket}
+\usepackage{listings}
+\usepackage{color}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[table,xcdraw]{xcolor}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{hyperref}
+\usepackage{vmargin}
+\usepackage{wrapfig}
+\usepackage{subfiles}
+\usepackage{float}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{tikz-cd}
+\usepackage{multirow}
+\usepackage{pgffor}
+\usepackage{enumitem}
+\usepackage{iflang}
+\usepackage{varioref}
+\usepackage{hyperref}
+\usepackage{cleveref}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{tikz}
+\usepackage{enumitem}
+\usepackage{xpatch}
+\usepackage{refcount}
+\usepackage{color}
+\usepackage{pdfpages}
+\usepackage{array}
+\usepackage{eurosym}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%% UTIL COMMANDS %%%%%%%%%%%%  
+
+\setcounter{secnumdepth}{4}
+\newcommand{\nc}{\newcommand}
+\nc{\supindex}{\textsuperscript}
+\renewcommand{\baselinestretch}{1.5}
+\nc{\myparagraph}[1]{\paragraph{#1}\mbox{}\\}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%% CONFIG FILE %%%%%%%%%%%%%
+
+\nc{\mytitle}{Economic Viability}
+\nc{\mysubtitle}{Bayesian Inference}
+\nc{\authors}{\textit{Oriol Alàs Cercós}}
+\nc{\datetime}{25\supindex{th} of May, 2022}
+\nc{\assignatura}{Technological Business Management and Entrepreneurship}
+\nc{\professorat}{Josep Escribà Garriga}
+
+% Per separar professors, utilitzar ','
+% 	Ex: Maria, Joan, Pere
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%  LANGUAGE   %%%%%%%%%%%%%
+
+\newcommand{\tr}{\IfLanguageName{english}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%% MATH %%%%%%%%%%%%%%%%
+
+\nc{\prob}[1]{P({#1})}
+\nc{\probl}[2]{P({#1}|{#2})}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%% FUNCTIONS %%%%%%%%%%%%
+
+\nc{\numitems}[1]{\getrefnumber{#1}}
+\newcounter{itemcntr}
+\AtBeginEnvironment{itemize}{%
+	\setcounter{itemcntr}{0}%
+	\xapptocmd{\item}{\refstepcounter{itemcntr}}{}{}%
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%% RADIO BUTTON %%%%%%%%%%%%
+
+\makeatletter
+\newcommand*{\radiobutton}{%
+	\@ifstar{\@radiobutton0}{\@radiobutton1}%
+}
+\newcommand*{\@radiobutton}[1]{%
+	\begin{tikzpicture}
+		\pgfmathsetlengthmacro\radius{height("X")/2}
+		\draw[radius=\radius] circle;
+		\ifcase#1 \fill[radius=.6*\radius] circle;\fi
+	\end{tikzpicture}%
+}
+\makeatother
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%  %%%%%%%%%%%%
+
+
+\newcolumntype{S}{>{\centering\arraybackslash}m{1.5em}}
+
+\renewcommand{\tabularxcolumn}[1]{m{#1}} % redefine 'X' to use 'm'
+\newcommand{ \titem}[1]{\item \textbf{#1}\quad}
+
+\newcommand{\costVar}[4]{In that moment, we want to earn $\frac{#1\text{€}}{1 h}$, therefore the human resource cost will be: \[#2 \cdot \frac{#3h}{1 day} \cdot \frac{#1\text{€}}{1 h} = #4 \text{€}\] }
+
+\nc{\numbers}[1]{
+	\begin{tabularx}{#1\textwidth}{|S|S|S|S|S|}
+		\hline 1 & 2 & 3 & 4& 5 \\\hline
+	\end{tabularx}
+}
+
+\nc{\optionsofcol}{
+	\multicolumn{3}{c}
+	{%
+		\numbers{0.338}
+	}
+}
+
+\nc{\options}{\multicolumn{2}{c}
+	{%
+		\numbers{0.338}
+}}
+
+\newcommand{\costHR}[4]{\[Cost_{\text{HR}} = #1 \frac{\text{€}}{h} \cdot \frac{#2 \, \, \text{hours}}{\text{day}} \cdot #3 \, \, \text{days} = #4 \, \, \text{€} \]}
+
+\newcolumntype{P}[1]{>{\centering\arraybackslash}p{#1}}
+
+\setpapersize{A4}
+
+\author{Oriol Alàs Cercós}
+\date{29 d'Abril del 2019}
+
+\def\contentsname{Índex}
+\begin{document}
+	
+	\definecolor{gray}{rgb}{0.4,0.4,0.4}
+	\definecolor{darkblue}{rgb}{0.0,0.0,0.6}
+	\definecolor{cyan}{rgb}{0.0,0.6,0.6}
+	\lstset{
+		basicstyle=\ttfamily,
+		columns=fullflexible,
+		showstringspaces=false,
+		commentstyle=\color{gray}\upshape
+	}
+	
+	\lstdefinelanguage{XML}
+	{
+		morestring=[b]",
+		morestring=[s]{>}{<},
+		morecomment=[s]{<?}{?>},
+		stringstyle=\color{black},
+		identifierstyle=\color{darkblue},
+		keywordstyle=\color{cyan},
+		morekeywords={xmlns,version,type}% list your attributes here
+	}
+	
+	\begin{titlepage}
+		\begin{figure}[htb]
+			\begin{center}
+				
+				\includegraphics[width=5cm]{imgs/udl.png}\\
+				
+				
+				\medskip
+				\begin{center}
+					
+					\huge\textbf{\mytitle}\\
+					\bigskip
+					\normalsize{\tr{Made by}{Realitzat per:}}
+					\\
+					\large\textit{\authors}
+					\\
+					\setlength{\parskip}{1em}
+					\normalsize{\tr{Delivery}{Data de lliurament:}}
+					\\
+					\large{\datetime}
+				\end{center}
+				
+				\vspace*{\stretch{2.0}}
+			\end{center}
+		\end{figure}
+		\begin{flushright}
+			Universitat de Lleida
+			\\
+			Escola Politècnica Superior
+			\\
+			Màster en Enginyeria Informàtica
+			\\
+			\assignatura
+			\\
+			\medskip
+			\textbf{\tr{Professorate:}{Tutor:}}
+			\\
+			\foreach \n in \professorat{\n\\}
+		\end{flushright}
+		\thispagestyle{empty} 
+	\end{titlepage}
+	\pagenumbering{roman}
+	\tableofcontents
+	\listoffigures
+	\newpage
+	\pagenumbering{arabic}
+	\section{Introduction}
+	Remote Sensing (RS) imagery is critical to perform challenges such climate change or natural resources management, including zone monitoring for reforestation, disaster mitigation and land surface change.  % canvi de terrenys, natural resources management, climate change, zone monitoring for reforestation, climate change, disaster mitigation 
+	Nevertheless, on average 55\% of the Earth's land surfaces is covered by clouds, being then a significant impediment to a broad range of applications, implying a great loss of information or causing effects such as blurring, which mitigates the power of RS.
+	
+	\subsection{Related work}
+	Questions:
+	\begin{itemize}
+		\item Cloud detection / Cloud removal
+		\item Which dataset uses?
+		\begin{itemize}
+			\item Bandwidths
+			\item Sparse ROI? How many? Multi-source?
+			\item Pair dataset?
+			\item Multi-Temporal?
+		\end{itemize}
+		\item Model
+		\begin{itemize}
+			\item Fully CNN?
+			\item Residual?
+			\item Needs pair dataset?
+			\item Has a skip function? Structure of U-Net?
+			\item GAN?
+		\end{itemize}
+		\item Metrics
+		
+	\end{itemize}
+	In \cite{8519033}
+	
+	\section{Bibliography}
+	\bibliography{bibliography}
+	\bibliographystyle{unsrt}
+\end{document}
