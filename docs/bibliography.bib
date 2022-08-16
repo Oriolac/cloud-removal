@@ -23,6 +23,80 @@
 
 ######### AI State-of-the-art
 
+@inproceedings{he2016deep,
+	title={Deep residual learning for image recognition},
+	author={He, Kaiming and Zhang, Xiangyu and Ren, Shaoqing and Sun, Jian},
+	booktitle={Proceedings of the IEEE conference on computer vision and pattern recognition},
+	pages={770--778},
+	year={2016}
+}
+
+@inproceedings{goodfellow2014generative,
+	title={Generative adversarial nets},
+	author={Goodfellow, Ian and Pouget-Abadie, Jean and Mirza, Mehdi and Xu, Bing and Warde-Farley, David and Ozair, Sherjil and Courville, Aaron and Bengio, Yoshua},
+	booktitle={Advances in neural information processing systems},
+	pages={2672--2680},
+	year={2014}
+} 
+
+@inproceedings{VaswaniSPUJGKP17,
+	title = {Attention is All you Need},
+	author = {Ashish Vaswani and Noam Shazeer and Niki Parmar and Jakob Uszkoreit and Llion Jones and Aidan N. Gomez and Lukasz Kaiser and Illia Polosukhin},
+	year = {2017},
+	url = {http://papers.nips.cc/paper/7181-attention-is-all-you-need},
+	researchr = {https://researchr.org/publication/VaswaniSPUJGKP17},
+	cites = {0},
+	citedby = {0},
+	pages = {6000-6010},
+	booktitle = {Advances in Neural Information Processing Systems 30: Annual Conference on Neural Information Processing Systems 2017, 4-9 December 2017, Long Beach, CA, USA},
+	editor = {Isabelle Guyon and Ulrike von Luxburg and Samy Bengio and Hanna M. Wallach and Rob Fergus and S. V. N. Vishwanathan and Roman Garnett},
+}
+
+@article{brown2020language,
+	title={Language Models are Few-Shot Learners},
+	author={Tom B. Brown and Benjamin Mann and Nick Ryder and Melanie Subbiah and Jared Kaplan and Prafulla Dhariwal and Arvind Neelakantan and Pranav Shyam and Girish Sastry and Amanda Askell and Sandhini Agarwal and Ariel Herbert-Voss and Gretchen Krueger and Tom Henighan and Rewon Child and Aditya Ramesh and Daniel M. Ziegler and Jeffrey Wu and Clemens Winter and Christopher Hesse and Mark Chen and Eric Sigler and Mateusz Litwin and Scott Gray and Benjamin Chess and Jack Clark and Christopher Berner and Sam McCandlish and Alec Radford and Ilya Sutskever and Dario Amodei},
+	year={2020},
+	eprint={2005.14165},
+	archivePrefix={arXiv},
+	primaryClass={cs.CL}
+}
+
+
+@InProceedings{pmlr-v119-chen20s,
+	title = 	 {Generative Pretraining From Pixels},
+	author =       {Chen, Mark and Radford, Alec and Child, Rewon and Wu, Jeffrey and Jun, Heewoo and Luan, David and Sutskever, Ilya},
+	booktitle = 	 {Proceedings of the 37th International Conference on Machine Learning},
+	pages = 	 {1691--1703},
+	year = 	 {2020},
+	editor = 	 {III, Hal Daumé and Singh, Aarti},
+	volume = 	 {119},
+	series = 	 {Proceedings of Machine Learning Research},
+	month = 	 {13--18 Jul},
+	publisher =    {PMLR},
+	pdf = 	 {http://proceedings.mlr.press/v119/chen20s/chen20s.pdf},
+	url = 	 {https://proceedings.mlr.press/v119/chen20s.html},
+}
+
+
+@InProceedings{pmlr-v139-ramesh21a,
+	title = 	 {Zero-Shot Text-to-Image Generation},
+	author =       {Ramesh, Aditya and Pavlov, Mikhail and Goh, Gabriel and Gray, Scott and Voss, Chelsea and Radford, Alec and Chen, Mark and Sutskever, Ilya},
+	booktitle = 	 {Proceedings of the 38th International Conference on Machine Learning},
+	pages = 	 {8821--8831},
+	year = 	 {2021},
+	editor = 	 {Meila, Marina and Zhang, Tong},
+	volume = 	 {139},
+	series = 	 {Proceedings of Machine Learning Research},
+	month = 	 {18--24 Jul},
+	publisher =    {PMLR},
+	pdf = 	 {http://proceedings.mlr.press/v139/ramesh21a/ramesh21a.pdf},
+	url = 	 {https://proceedings.mlr.press/v139/ramesh21a.html},
+	abstract = 	 {Text-to-image generation has traditionally focused on finding better modeling assumptions for training on a fixed dataset. These assumptions might involve complex architectures, auxiliary losses, or side information such as object part labels or segmentation masks supplied during training. We describe a simple approach for this task based on a transformer that autoregressively models the text and image tokens as a single stream of data. With sufficient data and scale, our approach is competitive with previous domain-specific models when evaluated in a zero-shot fashion.}
+}
+
+
+
+
 ######### DATASETS
 @article{sen12mscr,
 	title = {{Multisensor Data Fusion for Cloud Removal in Global and All-Season Sentinel-2 Imagery}},
@@ -42,6 +116,8 @@
 
 ######### PROPOSALS
 
+@INPROCEEDINGS{8014931,  author={Enomoto, Kenji and Sakurada, Ken and Wang, Weimin and Fukui, Hiroshi and Matsuoka, Masashi and Nakamura, Ryosuke and Kawaguchi, Nobuo},  booktitle={2017 IEEE Conference on Computer Vision and Pattern Recognition Workshops (CVPRW)},   title={Filmy Cloud Removal on Satellite Imagery with Multispectral Conditional Generative Adversarial Nets},   year={2017},  volume={},  number={},  pages={1533-1541},  doi={10.1109/CVPRW.2017.197}}
+
 @INPROCEEDINGS{8519033, 
 	author={Singh, Praveer and Komodakis, Nikos},
 	booktitle={IGARSS 2018 - 2018 IEEE International Geoscience and Remote Sensing Symposium},
@@ -53,9 +129,25 @@
 	doi={10.1109/IGARSS.2018.8519033}}
 @COMMENT https://hal-enpc.archives-ouvertes.fr/hal-01832797/document
 
+@article{LANARAS2018305,
+	title = {Super-resolution of Sentinel-2 images: Learning a globally applicable deep neural network},
+	journal = {ISPRS Journal of Photogrammetry and Remote Sensing},
+	volume = {146},
+	pages = {305-319},
+	year = {2018},
+	issn = {0924-2716},
+	doi = {https://doi.org/10.1016/j.isprsjprs.2018.09.018},
+	url = {https://www.sciencedirect.com/science/article/pii/S0924271618302636},
+	author = {Charis Lanaras and José Bioucas-Dias and Silvano Galliani and Emmanuel Baltsavias and Konrad Schindler},
+	keywords = {Sentinel-2, Super-resolution, Sharpening of bands, Convolutional neural network, Deep learning},
+	abstract = {The Sentinel-2 satellite mission delivers multi-spectral imagery with 13 spectral bands, acquired at three different spatial resolutions. The aim of this research is to super-resolve the lower-resolution (20 m and 60 m Ground Sampling Distance – GSD) bands to 10 m GSD, so as to obtain a complete data cube at the maximal sensor resolution. We employ a state-of-the-art convolutional neural network (CNN) to perform end-to-end upsampling, which is trained with data at lower resolution, i.e., from 40 → 20 m, respectively 360 → 60 m GSD. In this way, one has access to a virtually infinite amount of training data, by downsampling real Sentinel-2 images. We use data sampled globally over a wide range of geographical locations, to obtain a network that generalises across different climate zones and land-cover types, and can super-resolve arbitrary Sentinel-2 images without the need of retraining. In quantitative evaluations (at lower scale, where ground truth is available), our network, which we call DSen2, outperforms the best competing approach by almost 50% in RMSE, while better preserving the spectral characteristics. It also delivers visually convincing results at the full 10 m GSD.}
+}
+
+@COMMENT https://www.sciencedirect.com/science/article/pii/S0924271618302636
+
 @article{Meraner2020,
 	title = "Cloud removal in Sentinel-2 imagery using a deep residual neural network and SAR-optical data fusion",
-	journal = "ISPRS Journal of Photogrammetry and Remote Sensing",
+	journal = "ISPRS Journal of Photogrammetry and Remote Sensing",	
 	volume = "166",
 	pages = "333 - 346",
 	year = "2020",
@@ -82,3 +174,11 @@
 	DOI = {10.3390/rs14061342}
 }
 @COMMENT Multi-temporal dataset of india and scotland, great results. DSEN2-CR is cited. https://www.mdpi.com/2072-4292/14/6/1342/htm
+
+
+@article{sarukkai2019cloud,
+	title={Cloud Removal in Satellite Images Using Spatiotemporal Generative Networks},
+	author={Sarukkai, Vishnu and Jain, Anirudh and Uzkent, Burak and Ermon, Stefano},
+	journal={arXiv preprint arXiv:1912.06838},
+	year={2019}
+}
