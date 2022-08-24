@@ -17,7 +17,7 @@
 }
 @COMMENT https://link.springer.com/article/10.1007/s40747-019-00128-0
 
-@COMMNENT Understanding clouds https://arxiv.org/abs/1906.01906
+@COMNENT Understanding clouds https://arxiv.org/abs/1906.01906
 
 ######### SURVEYS
 
@@ -37,7 +37,7 @@
 	booktitle={Advances in neural information processing systems},
 	pages={2672--2680},
 	year={2014}
-} 
+}
 
 @inproceedings{VaswaniSPUJGKP17,
 	title = {Attention is All you Need},
@@ -52,14 +52,59 @@
 	editor = {Isabelle Guyon and Ulrike von Luxburg and Samy Bengio and Hanna M. Wallach and Rob Fergus and S. V. N. Vishwanathan and Roman Garnett},
 }
 
-@article{brown2020language,
-	title={Language Models are Few-Shot Learners},
-	author={Tom B. Brown and Benjamin Mann and Nick Ryder and Melanie Subbiah and Jared Kaplan and Prafulla Dhariwal and Arvind Neelakantan and Pranav Shyam and Girish Sastry and Amanda Askell and Sandhini Agarwal and Ariel Herbert-Voss and Gretchen Krueger and Tom Henighan and Rewon Child and Aditya Ramesh and Daniel M. Ziegler and Jeffrey Wu and Clemens Winter and Christopher Hesse and Mark Chen and Eric Sigler and Mateusz Litwin and Scott Gray and Benjamin Chess and Jack Clark and Christopher Berner and Sam McCandlish and Alec Radford and Ilya Sutskever and Dario Amodei},
-	year={2020},
-	eprint={2005.14165},
-	archivePrefix={arXiv},
-	primaryClass={cs.CL}
+@misc{brown2020language,
+	added-at = {2021-03-29T17:49:32.000+0200},
+	author = {Brown, Tom B. and Mann, Benjamin and Ryder, Nick and Subbiah, Melanie and Kaplan, Jared and Dhariwal, Prafulla and Neelakantan, Arvind and Shyam, Pranav and Sastry, Girish and Askell, Amanda and Agarwal, Sandhini and Herbert-Voss, Ariel and Krueger, Gretchen and Henighan, Tom and Child, Rewon and Ramesh, Aditya and Ziegler, Daniel M. and Wu, Jeffrey and Winter, Clemens and Hesse, Christopher and Chen, Mark and Sigler, Eric and Litwin, Mateusz and Gray, Scott and Chess, Benjamin and Clark, Jack and Berner, Christopher and McCandlish, Sam and Radford, Alec and Sutskever, Ilya and Amodei, Dario},
+	biburl = {https://www.bibsonomy.org/bibtex/295850dc02fa8a64a08252dc580322d39/frankyanpan},
+	description = {2005.14165.pdf},
+	interhash = {ca061f6d64797209bea0e0fdbc2f7af8},
+	intrahash = {95850dc02fa8a64a08252dc580322d39},
+	keywords = {GPT3 few-shotting},
+	note = {cite arxiv:2005.14165Comment: 40+32 pages},
+	timestamp = {2021-03-29T17:49:32.000+0200},
+	title = {Language Models are Few-Shot Learners},
+	url = {http://arxiv.org/abs/2005.14165},
+	year = 2020
 }
+
+@article{pix2pix2017,
+	title={Image-to-Image Translation with Conditional Adversarial Networks},
+	author={Isola, Phillip and Zhu, Jun-Yan and Zhou, Tinghui and Efros, Alexei A},
+	journal={CVPR},
+	year={2017}
+}
+
+
+@misc{unet,
+	abstract = {There is large consent that successful training of deep networks requires
+	many thousand annotated training samples. In this paper, we present a network
+	and training strategy that relies on the strong use of data augmentation to use
+	the available annotated samples more efficiently. The architecture consists of
+	a contracting path to capture context and a symmetric expanding path that
+	enables precise localization. We show that such a network can be trained
+	end-to-end from very few images and outperforms the prior best method (a
+	sliding-window convolutional network) on the ISBI challenge for segmentation of
+	neuronal structures in electron microscopic stacks. Using the same network
+	trained on transmitted light microscopy images (phase contrast and DIC) we won
+	the ISBI cell tracking challenge 2015 in these categories by a large margin.
+	Moreover, the network is fast. Segmentation of a 512x512 image takes less than
+	a second on a recent GPU. The full implementation (based on Caffe) and the
+	trained networks are available at
+	http://lmb.informatik.uni-freiburg.de/people/ronneber/u-net .},
+	added-at = {2022-06-07T20:27:10.000+0200},
+	author = {Ronneberger, Olaf and Fischer, Philipp and Brox, Thomas},
+	biburl = {https://www.bibsonomy.org/bibtex/2a8a0c515657686d130c8cb297f7364fb/bradleybossard},
+	description = {U-Net: Convolutional Networks for Biomedical Image Segmentation},
+	interhash = {9158de16b2caff7458df054dc6fc2748},
+	intrahash = {a8a0c515657686d130c8cb297f7364fb},
+	keywords = {unet},
+	note = {cite arxiv:1505.04597Comment: conditionally accepted at MICCAI 2015},
+	timestamp = {2022-06-07T20:27:10.000+0200},
+	title = {U-Net: Convolutional Networks for Biomedical Image Segmentation},
+	url = {http://arxiv.org/abs/1505.04597},
+	year = 2015
+}
+
 
 
 @InProceedings{pmlr-v119-chen20s,
@@ -75,6 +120,13 @@
 	publisher =    {PMLR},
 	pdf = 	 {http://proceedings.mlr.press/v119/chen20s/chen20s.pdf},
 	url = 	 {https://proceedings.mlr.press/v119/chen20s.html},
+}
+
+@inproceedings{CycleGAN2017,
+	title={Unpaired Image-to-Image Translation using Cycle-Consistent Adversarial Networks},
+	author={Zhu, Jun-Yan and Park, Taesung and Isola, Phillip and Efros, Alexei A},
+	booktitle={Computer Vision (ICCV), 2017 IEEE International Conference on},
+	year={2017}
 }
 
 
@@ -102,23 +154,23 @@
 	title = {{Multisensor Data Fusion for Cloud Removal in Global and All-Season Sentinel-2 Imagery}},
 	author = {Ebel, Patrick and Meraner, Andrea and Schmitt, Michael and Zhu, Xiao Xiang},
 	journal = {IEEE Transactions on Geoscience and Remote Sensing},
-	year = {2020}
+	year = {2020},
 	publisher = {IEEE}
 }
 @article{sen12mscrts,
 	title = {{SEN12MS-CR-TS: A Remote Sensing Data Set for Multi-modal Multi-temporal Cloud Removal}},
 	author = {Ebel, Patrick and Xu, Yajin and Schmitt, Michael and Zhu, Xiao Xiang},
 	journal = {IEEE Transactions on Geoscience and Remote Sensing},
-	year = {2022}
+	year = {2022},
 	publisher = {IEEE}
 } 
-@COMMENT El millo dataset, Sentinel2!
+@COMMENT{El millo dataset, Sentinel2!}
 
 ######### PROPOSALS
 
 @INPROCEEDINGS{8014931,  author={Enomoto, Kenji and Sakurada, Ken and Wang, Weimin and Fukui, Hiroshi and Matsuoka, Masashi and Nakamura, Ryosuke and Kawaguchi, Nobuo},  booktitle={2017 IEEE Conference on Computer Vision and Pattern Recognition Workshops (CVPRW)},   title={Filmy Cloud Removal on Satellite Imagery with Multispectral Conditional Generative Adversarial Nets},   year={2017},  volume={},  number={},  pages={1533-1541},  doi={10.1109/CVPRW.2017.197}}
 
-@INPROCEEDINGS{8519033, 
+@INPROCEEDINGS{cloud-gan, 
 	author={Singh, Praveer and Komodakis, Nikos},
 	booktitle={IGARSS 2018 - 2018 IEEE International Geoscience and Remote Sensing Symposium},
 	title={Cloud-Gan: Cloud Removal for Sentinel-2 Imagery Using a Cyclic Consistent Generative Adversarial Networks},
