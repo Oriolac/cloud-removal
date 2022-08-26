@@ -136,10 +136,14 @@
 \newacronym{rs}{RS}{Remote Sensing}
 \newacronym{sar}{SAR}{Synthetic Aperture Radar}
 \newacronym{cnn}{CNN}{Convolutional Neural Network}
+\newacronym{mlp}{MLP}{Multi-Layer Perceptron}
 \newacronym{gan}{GAN}{Generative Adversarial Network}
 \newacronym{cgan}{cGAN}{Conditional Generative Adversarial Network}
 \newacronym{mcgan}{McGAN}{Multi-spectral Conditional Generative Adversarial Network}
 \newacronym{nir}{NIR}{Near Infra Red}
+\newacronym{ir}{IR}{Infra Red}
+\newacronym{l1c}{L1C}{Level-1C}
+\newacronym{l2a}{L2A}{Level-2A}
 \newacronym{nlp}{NLP}{Natural Language Processing}
 \newacronym{psnr}{PSNR}{Peak signal-to-noise ratio}
 \newacronym{ssim}{SSIM}{Structural Similarity Index Metric}
@@ -218,20 +222,30 @@
 	\newpage
 	\pagenumbering{arabic}
 	\section{Introduction} 
-	\gls{rs} imagery is critical to perform challenges such climate change or natural resources management, including zone monitoring for reforestation, disaster mitigation and land surface change detection.  % canvi de terrenys, natural resources management, climate change, zone monitoring for reforestation, climate change, disaster mitigation 
+	\gls{rs} imagery is critical to perform challenges such climate change or natural resources management, including zone monitoring for reforestation, disaster mapping, land surface change detection and coastal water quality monitoring.  % canvi de terrenys, natural resources management, climate change, zone monitoring for reforestation, climate change, disaster mitigation 
 	Nevertheless, on average 55\% of the Earth's land surfaces is covered by clouds, being then a significant impediment to carry out a broad range of applications. Satellite imagery plagued by films of clouds that obstructs the scene implies a great loss of information or causing effects such as blurring, which mitigates the power of \gls{rs}. Hence, \gls{rs} applications definitely needs a generic technique to detect and remove the cloudy region with an in-painting of the underlying scene.
-%	\begin{itemize}
-%		\item Generic end-to-end model that can be retrained for specifically ROI by running supplementary iterations but general enough to be great in all geographical locations.
-%		\item Free.
-%	\end{itemize}
+	\\
+	\\
+	Once set the problem, the goals of this master thesis have been:
+	\begin{itemize}
+		\item Search state-of-the-art solutions as well as technologies that could bring new improvements and better results.
+		\item Create or search for a multi-temporal and spatial imagery to design and evaluate general solutions.
+		\item Design and implement an effective model and monitoring its training.
+		\item Evaluate the model and make a comparison with the other solutions proposed.
+	\end{itemize}
+
+	\newpage
+	\section{Problem Analysis}
 	\subsection{Sentinel2}
-	Sentinel2 images are provided by two satellites, Sentinel 2A and Sentinel 2B, which orbit each other with a 180º phase shift. Generally, the acquisition of the images is 10 days per satellite or more or less 5 days altogether. Therefore, a new updated image of a specific area is available in periods of time not exceeding five days. This makes Sentinel-2 data an excellent choice for studying environmental challenges. Sentinel-2 data is multi-spectral with 13 bands in the visible, near-infrared, and short-wave infrared spectrum. These bands come in a different spatial resolution ranging from 10m to 60m, so the images can be classified as medium-high resolution.
+	The analysis of the problem has been focused using Copernicus Sentinel2 constellation. 
+	Sentinel2 images are provided by two satellites, Sentinel 2A and Sentinel 2B, which orbit each other with a 180º phase shift. Generally, the acquisition of the images is more or less 10 days per satellite so that a new updated image of a specific area is available in periods of time not exceeding five days. This makes Sentinel-2 data an excellent choice for studying environmental challenges. Sentinel-2 products are a compilation of elementary granules of fixed size, within a single orbit. A granule, also called tile, is a multi-spectral image with 13 bands in the visible, near-infrared, and short-wave infrared spectrum. These bands come in a different spatial resolution ranging from 10m to 60m, so the images can be classified as medium-high resolution. All the granules are 100x100km2 ortho-images in UTM/WGS84 projection. There are five types of Sentinel-2 data although only two are available for users: \gls{l1c} and \gls{l2a}. The difference between them is that the latter provides background reflectance imagery of the atmosphere derived from associated \gls{l1c} products. In \ref{tab:sentinel2-bands}, there are the bands with its most high resolution and ordered by its central wavelength, being B5-B12 \gls{nir} or \gls{ir} bands.
 	\begin{table}[H]
 		\centering
 		\caption{Sentinel 2 bands}
+		\label{tab:sentinel2-bands}
 		\begin{tabular}{llrrr}
 			\hline
-			Band & Name                & \parbox{3cm}{\centering \hspace{0.1cm}\\ Central \\ wavelength ($\mu m$) \\ \hspace{0.1cm}} & Bandwidth (nm) & \parbox{3cm}{\centering Spatial\\ resolution (m)} \\ \hline
+			Band & Name                & \parbox{3cm}{\centering \vspace{0.5cm} Central \\ wavelength ($\mu m$) \\ \hspace{0.1cm}} & Bandwidth (nm) & \parbox{3cm}{\centering Spatial\\ resolution (m)} \\ \hline
 			B1   & Coastal aerosol     &                      $0.433$ &             27 &                     60 \\
 			B2   & Blue                &                        0.490 &             98 &                     10 \\
 			B3   & Green               &                        0.560 &             45 &                     10 \\
@@ -239,69 +253,75 @@
 			B5   & Vegetation Red Edge &                        0.705 &             19 &                     20 \\
 			B6   & Vegetation Red Edge &                        0.740 &             18 &                     20 \\
 			B7   & Vegetation Red Edge &                        0.783 &             28 &                     20 \\
-			B8   & NIR                 &                        0.842 &            145 &                     10 \\
+			B8   & NIR                 &                        0.842 &            125 &                     10 \\
 			B8A  & Vegetation Red Edge &                        0.865 &             33 &                     20 \\
 			B9   & Water Vapour        &                        0.945 &             26 &                     60 \\
 			B10  & SWIR-Cirrus         &                        1.375 &             75 &                     60 \\
 			B11  & SWIR                &                        1.610 &            143 &                     20 \\
-			B12  & SWIR                &                        2.190 &            242 &                     20
+			B12  & SWIR                &                        2.190 &            242 &                     20\\\hline
 		\end{tabular}
 	\end{table}
-% Great indices:
-% -  TNDVI - Transformed Normalized Difference Vegetation Index, indicates a relation between the amount of green biomass that is found in a pixel. It has always positive values and the variances of the ratio are proportional to mean values (Senseman et al. 1996).
-% Green spectral band was found to be more efficient than the red spectral band to discriminate nitrogen. GNDVI - Green Normalized Difference Vegetation Index (Gitelson et al. 1996) is more sensitive than NDVI to different concentration rates of chlorophyll, which is highly correlated at nitrogen.
-% S2REP - Sentinel-2 Red-Edge Position Index is sensitive to both crop (chlorophyll content) N and growth status. Generally, the higher the S2REP value, the higher is the chlorophyll content (Guyot and Baret, 1988). The Sentinel-2 Band 6 (740 nm) measures the reflectance situated at the top of the linear part of the 'red edge' slope.
-
-% Atmospheric reflectance https://www.researchgate.net/publication/340862766_Impact_of_Various_Atmospheric_Corrections_on_Sentinel-2_Land_Cover_Classification_Accuracy_Using_Machine_Learning_Classifiers
+The bands can give us a various range of aspects of the orthogonal view. Several spectral indices have been created over the years by performing operations between the bands, which can broaden the range of analysis and make them more accurate to finally better understand the features in the imagery. The most used bands to generate indices are B3, B4 and B8. The following list explains some of the most popular:
+\begin{description}
+		\item[NDVI] The Normalized Difference Vegetation Index is highly associated with the vegetation content. Higher values of NDVI correspond to areas that reflect more in the near-infrared spectrum and to denser and healthier vegetation.
+		\[\text{NDVI} =  \frac{\text{B8} - \text{B4}}{\text{B8} + \text{B4}}\] 
+		\item[GNDVI] Green Normalized Difference Vegetation Index is modified version NDVI to be more sensitive to the variation of chlorophyll content in the crop.
+		\[\text{GNDVI} =  \frac{\text{B8} - \text{B3}}{\text{B8} + \text{B3}}\] 
+		\item[NDMI] Normalized Difference Moisture Index is used to determine vegetation water content.
+		\[\text{NDMI} = \frac{\text{B8} - \text{B11}}{\text{B8} + \text{B11}}\]
+		\item[MSI] Moisture Stress Index increases in leaf water content, so that makes it perfect for finding water stress in plants.
+		\[\text{MSI} = \frac{\text{B11}}{\text{B8}}\]
+		\item[NBRI] Normalized Burned Ratio Index detects burned areas and it is used to monitor the recovery of the ecosystem.
+		\[\text{NBRI} = \frac{\text{B8} - \text{B12}}{\text{B8} - \text{B12}}\]
+		\item[BSI] Bare Soil Index quantifies the soil mineral composition and the presence of vegetation.
+		\[\text{BSI} = \frac{(\text{B11} + \text{B4} )- (\text{B8} + \text{B2})}{(\text{B11} + \text{B4} ) + (\text{B8} + \text{B2})}\]
+		\item[NDWI] Normalized Difference Water Index is used for the identification of water bodies although is sensitive to build-up land and result in over-estimated water bodies.
+		\[\text{NDWI} = \frac{\text{B3} - \text{B8}}{\text{B3} + \text{B8}}\]
+		\item[NDSI] Normalized Difference Snow Index identifies snow cover over land areas since in B11 snow absorbs most of the incident radiation while the clouds do not.
+		\[\text{NDSI} = \frac{\text{B3} - \text{B11}}{\text{B3} + \text{B11}}\]
+\end{description}
 	\subsection{Related work and state-of-the-art}
-%	Questions:
-%	\begin{itemize}
-%		\item Cloud detection / Cloud removal
-%		\item Which dataset uses?
-%		\begin{itemize}
-%			\item Bandwidths
-%			\item Sparse ROI? How many? Multi-source?
-%			\item Pair dataset?
-%			\item Multi-Temporal?
-%		\end{itemize}
-%		\item Model
-%		\begin{itemize}
-%			\item Fully CNN?
-%			\item Residual?
-%			\item Needs pair dataset?
-%			\item Has a skip connection? Structure of U-Net?
-%			\item GAN?
-%		\end{itemize}
-%		\item Metrics
-%	\end{itemize}
-	Deep learning have been a popular and efficient technique to solve challenges from satellite imagery. Specifically, \gls{cnn} have been the main architecture of neural networks to provide a solution from image-based problems. 
-	\\
-	\\
-	In \cite{LANARAS2018305}, they create a deep learning approach to Sentinel-2 super-resolution. Their hypothesis was the existence of a complex mixture of correlations across many spectral bands over a large spatial context. Hence, the input of the model is a concatenation of the high-level resolution bands with the low-level resolution bandwidths upsampled to 10m by simple bi-linear interpolations. The model itself is a clear reference of residual networks \cite{he2016deep}. Furthermore, as in ResNet architectures, it uses skip connections to reduce the average effective path length through the network, alleviate the vanishing gradient problem and greatly accelerates the learning during the training.
+	Deep learning have been a popular and efficient technique to solve challenges from satellite imagery. Specifically, \gls{cnn} have been the main architecture of neural networks to provide a solution from image-based problems. What differentiates \gls{cnn} from the standard \gls{mlp} is that they have hidden layers called convolutional layers, which are able to take patterns from their inputs using filters. A filter can be considered a relatively small matrix that slides from the input by operating with the weights of the matrix. This action is called \textit{convolving }and, in its simplest case, the output value of a layer with ($N, C_{in}, H, W$) as the input and ($N, C_{out}, H_{out}, W_{out}$) as the output is described as:
+	\[out(N_i, C_{out_j}) = bias(C_{out_j}) + \sum_{k=0}^{C_{in} - 1} weight(C_{out_j}, k) \star \, input(N_i, k)\]
+	where $\star$ is the 2D cross-correlation operator, $N$ is the batch size, $C$ denotes the number of channels and $H$ and $W$ are the height and width in pixels of the planes respectively. A graphic representation of a CNN architecture can be seen in \ref{fig:related-lenet}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=14cm]{imgs/relatedwork/lenet-5.jpeg}
+		\caption{LeNet-5 architecture.}
+		\label{fig:related-lenet}
+	\end{figure}
+	Being that told so, there are a lot of state-of-the-art using \gls{cnn}. In \cite{LANARAS2018305}, they create a deep learning approach to Sentinel-2 super-resolution. Their hypothesis was the existence of a complex mixture of correlations across many spectral bands over a large spatial context. Hence, the input of the model is a concatenation of the high-level resolution bands with the low-level resolution bandwidths upsampled to 10m by simple bi-linear interpolations. The model itself is a clear reference of residual networks \cite{he2016deep}. Furthermore, as in ResNet architectures, it uses skip connections to reduce the average effective path length through the network, alleviate the vanishing gradient problem and greatly accelerates the learning during the training.
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=6cm]{imgs/relatedwork/residualblock.png}
 		\caption{Residual learning: a building block.}
 	\end{figure}
 	Similarly, in \cite{Meraner2020}, a residual network is used with the same skip connections mechanism to bring a solution to cloud removal challenge.
-	Regarding the design of the neural network, DSen2-CR is a fully convolutional network, so it can accept input images of any spatial dimensions (\textit{m}), as it can be seen in \ref{fig:dsen2-cr}.
+	Regarding the design of the neural network, DSen2-CR is a fully convolutional network, so it can accept input images of any spatial dimensions (\textit{m}), as it can be seen in \ref{fig:related-dsen2-cr}.
 	The  output of DSen2-CR is a 13-channel layer, representing the thirteen bands from Sentinel2.  
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=10cm]{imgs/relatedwork/sar.png}
 		\caption{DSen2-CR model diagram.}
-		\label{fig:dsen2-cr}
+		\label{fig:related-dsen2-cr}
 	\end{figure}
 	 It also uses
 	\gls{sar} 
-	optical data, which represents an important complementary source to help the model to make greater results. However, \gls{sar} images are affected by a particular type of noise called speckle, which can difficult network's learning. In addition to that, the model depends on one more source to remove the clouds, as \gls{sar} images cannot be downloaded in Sentinel-2. It can be seen in \ref{fig:related-dsen2-cr-predictions} that the lack of \gls{sar} data make the network less powerful. 
+	optical data, which represents an important complementary source to help the model to make greater results. However, \gls{sar} images are affected by a particular type of noise called \textit{speckle}, which can difficult network's learning and effectiveness. In addition to that, the model depends on one more source to remove the clouds, as \gls{sar} images cannot be downloaded in Sentinel-2. It can be seen in \ref{fig:related-dsen2-cr-predictions} that the lack of \gls{sar} data make the network less powerful. 
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=13cm]{imgs/relatedwork/dsen2-cr-predictions.png}
 		\caption{Examples of the influence of SAR data. Being (a, f) cloudy images, (b, g), SAR images, (c, h), the target cloudless images, (d, i), the synthesized images without SAR input data and (e, j) the predictions using SAR data as input.}
 		\label{fig:related-dsen2-cr-predictions}
 	\end{figure}
-	Improvements have been found using \gls{gan} \cite{goodfellow2014generative}, which is a model architecture that belongs to the set of generative models. \gls{gan} is an unsupervised model made up of two neural networks: the generator and the discriminator. The idea is based on a game theoretic scenario in which the generator network must compete against an adversary. While the generator network produces samples, the aim of the discriminator is to distinguish between the real samples and the drawn by the generator. The discriminator is a binary classifier trying not to be fooled. The generator loss is calculated using the discriminator as a reference of how much far is from real images while the discriminator loss is calculated by how much accurate is discerning between the synthesized data and the real one. The standard function can be known as the min-max loss:
+	Improvements have been found using \gls{gan} \cite{goodfellow2014generative}, which is a model architecture that belongs to the set of generative models. \gls{gan} is an unsupervised model made up of two neural networks: the generator and the discriminator. The idea is based on a game theoretic scenario in which the generator network must compete against an adversary. While the generator network produces samples, the aim of the discriminator is to distinguish between the real samples and the drawn by the generator. The discriminator is a binary classifier trying not to be fooled. 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=11cm]{imgs/relatedwork/gan.png}
+		\caption{GAN model diagram.}
+		\label{fig:related-gan-diagram}
+	\end{figure}
+	The generator loss is calculated using the discriminator as a reference of how much far is from real images while the discriminator loss is calculated by how much accurate is discerning between the synthesized data and the real one. The standard function can be known as the min-max loss:
 	\begin{align*}
 		Loss_D(D) =& \; E_x[log(D(x)]\\
 		Loss_G(G) =& \; E_y[log(1 - D(G(y)))]\\
@@ -309,10 +329,14 @@
 	\end{align*}
 	During training, both networks constantly try to outsmart each
 	other, in a zero-sum game. At some point of the training, the game may end up in a state that
-	game theorists call a Nash equilibrium, when no player would be better off changing their own strategy, assuming the other players do not change theirs. \gls{gan}s can only reach one possible Nash equilibrium: when the generator produces so realistic images that the discriminator is forced to guess by 50 \% probability that the image is real or not. Nevertheless, the training process not always can converge to that equilibrium. There are several factors that make the training hard to reach the desired state. For instance, there is a possibility that the discriminator always outsmarts the generator so that it can clearly distinguish between fake and real images. As it never fails, the generator is stuck trying to produce better images as it cannot learn from the errors of the discriminator. Possible solutions can be carried out such as making the discriminator less powerful, decreasing the learning rate or adding noise to the discriminator target. Another big obstacle is when the generator becomes less diverse, and it learns only to perfectly generate realistic images of a single class, so it forgets about the others. This is  called mode collapse. At some point, the discriminator can learn how to beat the generator, but then, the latter is forced to do the same but in another class, cycling between classes never becoming good at any of them. A popular technique to avoid is experience replay, which consists in storing synthetic images at each iteration in a replay buffer. There is a lot of literature of obstacles and solutions to improve \gls{gan} training and it is still very active, as it is in its applications too. The tuning of hyper-parameters and the design of the model will be a key to pursue the Nash equilibrium. For instance, there is a variant called \gls{cgan}. Traditionally, the generative network only produces the image from a random vector as an input, which is also called latent vector since it cannot be manipulated or with prior convictions of how will be. Unfortunately, this only allows to generate a random image from the domain of the latent space, which is hard to map to the generated images. However, \gls{cgan} can be trained so that both generator and discriminator models can be conditioned to some class labels or multi-dimensional vectors and produce synthetic images from a specific domain.
-	\\
-	\\
-	Actually, it is hard to find another \gls{gan} that can fit in cloud removal problem without being \gls{cgan}, since the model needs to be conditioned to the input image. In \cite{8014931}, they %TODO change name
+	game theorists call a Nash equilibrium, when no player would be better off changing their own strategy, assuming the other players do not change theirs. \gls{gan}s can only reach one possible Nash equilibrium: when the generator produces so realistic images that the discriminator is forced to guess by 50 \% probability that the image is real or not. Nevertheless, the training process not always can converge to that equilibrium. There are several factors that make the training hard to reach the desired state. For instance, there is a possibility that the discriminator always outsmarts the generator so that it can clearly distinguish between fake and real images. As it never fails, the generator is stuck trying to produce better images as it cannot learn from the errors of the discriminator. Possible solutions can be carried out such as making the discriminator less powerful, decreasing the learning rate or adding noise to the discriminator target. Another big obstacle is when the generator becomes less diverse, and it learns only to perfectly generate realistic images of a single class, so it forgets about the others. This is  called \textit{mode collapse}. At some point, the discriminator can learn how to beat the generator, but then, the latter is forced to do the same but in another class, cycling between classes never becoming good at any of them. A popular technique to avoid is \textit{experience replay}, which consists in storing synthetic images at each iteration in a replay buffer. There is a lot of literature of obstacles and solutions to improve \gls{gan} training and it is still very active, as it is in its applications too. The tuning of hyper-parameters and the design of the model will be a key to pursue the Nash equilibrium. For instance, there is a variant called \gls{cgan}. Traditionally, the generative network only produces the image from a random vector as an input, which is also called \textit{latent vector} since it cannot be manipulated or with prior convictions of how will be. Unfortunately, this only allows to generate a random image from the domain of the latent space, which is hard to map to the generated images. However, \gls{cgan} can be trained so that both generator and discriminator models can be conditioned to some class labels or multi-dimensional vectors and produce synthetic images from a specific domain. In \ref{fig:related-cgan-diagram}, it can be seen a \gls{cgan} diagram where the generator is conditioned by some inputs as well as the real data have the condition vector in each sample.
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=11cm]{imgs/relatedwork/cgan.png}
+		\caption{cGAN model diagram.}
+		\label{fig:related-cgan-diagram}
+	\end{figure}	
+	Actually, it is hard to find another \gls{gan} that can fit better in cloud removal problem without being \gls{cgan}, since the model needs to be conditioned to the input image. In \cite{8014931}, they %TODO change name
 	proposed a  \gls{mcgan} trained using RGB and \gls{nir} cloud-free bands as input and synthetic RBG cloudy images as target. It is true that short wave bands are unaffected by cloud cover and using \gls{nir} images to guide to uncover the clouds of satellite imagery is great since \gls{nir} bands posses have higher penetration through fog than visible light bands. Nevertheless, synthesizing the target might not be realistic enough to feasibly deploy the model in real-state. Regarding the experimental results, they have only showed qualitative metrics by comparing the ground-truth with cloud-free images, ones synthesized and ones real, accompanied both by the cloud obscure image and the cloud mask.  As the NIR channel is not altered by the perlin noise, there is a huge difference about the effectiveness comparing the synthesized images with the real ones, as it can be seen in \ref{fig:related-mcgan-synthesized} and \ref{fig:related-mcgan-real}
 	\begin{figure}[H]
 		\centering
@@ -412,8 +436,10 @@
 		\label{fig:related-cloudy-gan-fail}
 	\end{figure}
 	Although \gls{cnn} have worked very well for cloud removal, latest and disruptive state-of-the-art deep learning attention-based architectures \cite{VaswaniSPUJGKP17} uncover new paths to achieve remarkable improvements and results. It has been demonstrated that transformers can excellently overcome challenges such \gls{nlp} \cite{brown2020language} 
-	, Text-To-Image Generation \cite{pmlr-v139-ramesh21a}  or Image Completion \cite{pmlr-v119-chen20s} with large datasets, great model size and enough compute. Recent contributions have been demonstrated that 
-	\section{Data}
+	, Text-To-Image Generation \cite{pmlr-v139-ramesh21a}  or Image Completion \cite{pmlr-v119-chen20s} with large datasets, great model size and enough compute.
+	\\
+	\\
+	A transformer is 
 	\subsection{Academic Datasets}
 	\section{Model architecture}
 	
