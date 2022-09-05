@@ -147,6 +147,7 @@
 \newacronym{nlp}{NLP}{Natural Language Processing}
 \newacronym{psnr}{PSNR}{Peak signal-to-noise ratio}
 \newacronym{ssim}{SSIM}{Structural Similarity Index Metric}
+\newacronym{rnn}{RNN}{Recurrent Neural Network}
 
 \def\contentsname{Índex}
 \begin{document}
@@ -435,11 +436,24 @@ The bands can give us a various range of aspects of the orthogonal view. Several
 		\caption{Failure cases in CloudGAN attempting to removal overly clouded images over-smoothening or completely failing.}
 		\label{fig:related-cloudy-gan-fail}
 	\end{figure}
-	\gls{cnn} have worked very well for cloud removal, but latest and disruptive state-of-the-art deep learning attention-based architectures \cite{VaswaniSPUJGKP17} uncover new paths to achieve remarkable improvements and results. It has been demonstrated that transformers can excellently overcome challenges such \gls{nlp} \cite{brown2020language} 
-	, Text-To-Image Generation \cite{pmlr-v139-ramesh21a}  or Image Completion \cite{pmlr-v119-chen20s} with large datasets, great model size and enough compute.
+	\gls{cnn} have worked very well for cloud removal, but latest and disruptive state-of-the-art deep learning attention-based architectures \cite{VaswaniSPUJGKP17} uncover new paths to achieve remarkable improvements and results. It has been demonstrated that transformers can excellently overcome challenges such \gls{nlp} \cite{brown2020language}, Text-To-Image Generation \cite{pmlr-v139-ramesh21a}  or Image Completion \cite{pmlr-v119-chen20s} with large datasets, great model size and enough compute.
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=7cm]{imgs/relatedwork/transformer-block}
+		\caption{Transformer block architecture. \\
+			\textbf{left block}, the encoder architecture, \textbf{right block}, the decoder architecture.}
+		\label{fig:related-transformer-block}
+	\end{figure}
+	The transformer neural network is composed by an encoder-decoder architecture  much like \gls{rnn}. However, the difference is that the input sequence can be passed in parallel by passing also the positional encoder zipped with, as the input might have different meaning depending on its position. Therefore, the positional encoder is a vector that gives context based on position of the element in a sentence. \cite{VaswaniSPUJGKP17} uses a sine and cosine function to generate this vector but it could be any reasonable function.
 	\\
 	\\
-	A transformer is 
+	The input and the positional encoding is passed into the encoder block. The encoder block has $N$ identical encoder layers. Each layer has two sub-layers: a multi-head attention layer and a feed forward layer. Both sub-layers have a residual connection and a layer normalization\footnote{The normalization is done by each feature instead by each sample.} next to their output vector. When the attention is computed, it means that it is computing what part of the sentence should the network focus. The attention is computed by how relevant is the \textit{i}\textsuperscript{th} element of the sentence to other words in the same sentence.  Therefore, we can understand the attention as a vector that captures the contextual relationships between elements in the sentence. The feed-forward layer is a network that is applied to every one of the attention vectors. This layer is used to turn these vectors into a form that the next encoder or decoder block can get as an input. 
+	\\
+	\\
+	Regarding the decoder block, it has several similarities with the encoder block. They both have $N$ identical layers and a position encoding. However, the decoder layer have a masked multi-head attention layer before the multi-head attetion layer and the feed forward layer. This is because the encoder can use all the elements of the input sentence  but the decoder can only use the previous elements $\{ \, j\text{\textsuperscript{th} element} \, \, \, | \, \, \, j < i \, \}$ of the sentence. By not doing that, there would be no learning at all. The output of the decoder block is passed into a linear layer, which is an another feed forward layer. Finally, the output is passed to a softmax layer to have a better understanding of the output data as it returns a probability distribution. 
+	\\
+	\\
+	
 	\subsection{Academic Datasets}
 	\section{Model architecture}
 	
@@ -448,5 +462,4 @@ The bands can give us a various range of aspects of the orthogonal view. Several
 	\section{Bibliography}
 
 	\bibliography{bibliography}
-	\bibliographystyle{unsrt}
-\end{document}
+	\bibliographystyle{unsrt}\end{document}
