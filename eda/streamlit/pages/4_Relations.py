@@ -2,6 +2,7 @@
 import streamlit as st
 import pandas as pd
 
+
 def read_pkl(key_pkl):
     if key_pkl not in st.session_state:
         paired: pd.DataFrame = pd.concat([pd.read_pickle(f'eda/streamlit/data/{key_pkl}_{s}.pkl') for s in range(3)])

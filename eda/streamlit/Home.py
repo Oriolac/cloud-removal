@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from collections import Counter
+import logging
 import plotly.express as px
 
 st.write("# Exploratory Data Analysis")
@@ -20,12 +20,14 @@ st.markdown(
 )
 
 def read_pkl(key_pkl):
+    logging.info(f"Getting {key_pkl}")
     if key_pkl not in st.session_state:
         paired: pd.DataFrame = pd.concat([pd.read_pickle(f'eda/streamlit/data/{key_pkl}_{s}.pkl') for s in range(3)])
         st.session_state[key_pkl] = paired
     else:
         paired = st.session_state[key_pkl]
     paired['type'] = key_pkl
+    logging.info(f"Extracted {key_pkl}")
     return paired
 
 cloudless = read_pkl('cloudless')
