@@ -124,7 +124,7 @@ st.markdown("""
 DF = turn_to_dist(cloudless, cloudy)
 
 if len(selected_bands) == 0:
-    st.warning("You must select one band and one property at least")
+    st.warning("Please, select one band at least")
 else:
     to_kind_hist(DF, selected_bands)
 st.markdown("""
@@ -132,6 +132,6 @@ st.markdown("""
 """)
 select_properties = st.selectbox("Select properties", NAME_PROPERTIES, key=keys.new())
 if len(selected_bands) == 0:
-    st.warning("You must select one band and one property at least")
+    st.warning("Please, select one band at least")
 else:
     get_filter(DF, selected_bands, select_properties)
