@@ -23,7 +23,6 @@ BANDS = [f"{b}" for b in range(13)]
 
 PROPERTIES_DICT = {
     "Traditional Contrast": "traditional_contrast",
-    "Michelson Contrast": "michelson_contrast",
     "RMS Contrast": "rms_contrast",
     "Laplacian Blur": "laplacian_blur",
 }
@@ -31,6 +30,7 @@ PROPERTIES_DICT = {
 BASIC_ATTR_DICT = {
     "season": ["spring", "summer", "fall", "winter"],
     "type": ["cloudless", "cloudly"],
+    "scene": list(map(int, cloudy['scene'].unique()))
 }
 
 NAME_PROPERTIES = list(PROPERTIES_DICT.keys())
@@ -43,7 +43,7 @@ def get_full_df_projection(old_df, projection):
         df1['value'] = old_df[attr]
         df1['measure'] = attr
         df1['band'] = int(attr.split('_')[0])
-        for copy_attr in ['type', 'season', 'type']:
+        for copy_attr in BASIC_ATTR_DICT.keys():
             df1[copy_attr] = old_df[copy_attr]
         df = pd.concat([df, df1])
     return df
@@ -55,7 +55,7 @@ def band_analysis(df):
         col1, col2 = st.columns(2)
         band = col1.selectbox("Please, choose a band", BANDS)
         projection = "{band}_{property}".format(band=band, property=PROPERTIES_DICT[select_property])
-        df = df[[projection, 'type', 'season']]
+        df = df[[projection, *BASIC_ATTR_DICT.keys()]]
         st.markdown("""
                     ### Box plot
                 """)
@@ -188,7 +188,12 @@ def comparing_properties(df):
             name_band_property = f"{band}_{PROPERTIES_DICT[compared_property]}"
             new_df[compared_property] = df[df.measure == name_band_property]['value']
             new_df[hue] = df[df.measure == name_band_property][hue]
-            fig = px.scatter(new_df, x=select_property, y=compared_property, title="Scatter plot of {} and {} in band {}".format(select_property, compared_property, band), color=hue)
+            if hue == "":
+                fig = px.scatter(new_df, x=select_property, y=compared_property,
+                                 title="Scatter plot of {} and {} in band {}".format(select_property, compared_property,
+                                                                                     band))
+            else:
+                fig = px.scatter(new_df, x=select_property, y=compared_property, title="Scatter plot of {} and {} in band {}".format(select_property, compared_property, band), color=hue)
             fig.update_traces(marker_size=marker_size)
             fig.update_yaxes(matches="y")
             fig.update_xaxes(matches="x")
@@ -199,16 +204,17 @@ concatenated = pd.concat([cloudless, cloudy])
 select_property = st.sidebar.selectbox("Select a property", NAME_PROPERTIES)
 hue = st.sidebar.selectbox("Select a hue", [""] + list(BASIC_ATTR_DICT.keys()))
 possible_filters = set(BASIC_ATTR_DICT.keys())
-if hue != "":
-    possible_filters.remove(hue)
 filter_key = st.sidebar.selectbox("Please, select a filter", [""] + list(possible_filters))
 if filter_key != "":
     filters = st.sidebar.multiselect("Please, filter by these options", BASIC_ATTR_DICT[filter_key])
-    last_shape = concatenated.shape[0]
-    concatenated = concatenated[concatenated[filter_key].apply(lambda x: x in filters)]
-    st.sidebar.write("By filtering, it is showing {} rows of {} ({:.2f} %)".format(concatenated.shape[0], last_shape,
-                                                                                   concatenated.shape[
-                                                                                       0] / last_shape * 100))
+    if len(filters) != 0:
+        last_shape = concatenated.shape[0]
+        concatenated = concatenated[concatenated[filter_key].apply(lambda x: x in list(map(str, filters)))]
+        st.sidebar.write("By filtering, it is showing {} rows of {} ({:.2f} %)".format(concatenated.shape[0], last_shape,
+                                                                                       concatenated.shape[
+                                                                                           0] / last_shape * 100))
+    else:
+        st.sidebar.warning("Any filter selected.")
 tab1, tab2, tab3 = st.tabs(['Analysis of a band', 'Comparison between bands', 'Comparison between properties'])
 
 with tab1:

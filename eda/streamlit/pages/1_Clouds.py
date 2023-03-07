@@ -28,7 +28,6 @@ def add_title(text, level='#'):
 
 add_title("Cloud coverage")
 
-add_title("Cloud coverage distributions", "##")
 
 
 def cloudless_body():
@@ -79,58 +78,58 @@ def all_body():
                        x="cloud_percentage", color="type")
     st.plotly_chart(fig, theme="streamlit", )
 
+def get_crops_attr(bands):
+    return [f"b{b}_cloudy_crop_correlation_mse" for b in bands]
+
+def get_bands_attr(bands):
+    return [f"b{b}_cloudy_band_correlation_mse" for b in bands]
+
+
+
 
 def correlation_body():
     add_title("Correlation between bands and cloud mask", "###")
-    crops = [f"b{b}_cloudy_crop_correlation_mse" for b in range(13)]
-    bands = [f"b{b}_cloudy_band_correlation_mse" for b in range(13)]
+    BANDS = list(range(13))
 
     df = cloudy.copy()
-
-
-
     col1, col2, col3 = st.columns(3)
     with col1:
         option = st.selectbox("Select the RoI", ('Cropped', 'All Image', 'Both'))
+    with col3:
+        st.write("Other options:")
+        selected = st.checkbox("Select all")
+    with col2:
+        if selected:
+            selected_bands = BANDS
+        else:
+            selected_bands = st.multiselect("Select bands", BANDS)
     if option == "Cropped":
-        with col3:
-            st.write("Other options:")
-            selected = st.checkbox("Select all")
-        with col2:
-            if selected:
-                select_bands = crops
-            else:
-                select_bands = st.multiselect("Select bands", crops)
+        crops = get_crops_attr(selected_bands)
         season = st.selectbox("Select Season", ["All"] + seasons)
         if season == "All":
-            correlation_crop(crops, df, select_bands)
+            correlation_crop(df, crops)
         else:
-            correlation_crop(crops, df[df.season == season], select_bands)
+            correlation_crop(df[df.season == season], crops)
     elif option == "All Image":
-        with col3:
-            st.write("Other options:")
-            selected = st.checkbox("Select all")
-        with col2:
-            if selected:
-                select_bands = bands
-            else:
-                select_bands = st.multiselect("Select bands", bands)
+        select_bands = get_bands_attr(selected_bands)
         season = st.selectbox("Select Season", ["All"] + seasons)
         if season == "All":
             correlation_band(df, select_bands)
         else:
             correlation_band(df[df.season == season], select_bands)
     else:
+        crops = get_crops_attr(selected_bands)
+        select_bands = get_bands_attr(selected_bands)
+
         season = st.selectbox("Select Season", ["All"] + seasons)
         df = df if season == "All" else df[df.season == season]
-        correlation_crop(crops, df, crops)
-        correlation_band(df, bands)
-
+        correlation_crop(crops, df)
+        correlation_band(df, select_bands)
 
 def correlation_band(df, select_bands):
     add_title("Mask correlation of all the image", "####")
     if len(select_bands) == 0:
-        st.warning("Please select at least on band.")
+        st.warning("Please select at least one band.")
         return
     df = df.transpose().loc[select_bands]
     indexes = df.reset_index()['index']
@@ -141,12 +140,12 @@ def correlation_band(df, select_bands):
     st.plotly_chart(fig, theme="streamlit")
 
 
-def correlation_crop(crops, df, select_bands):
+def correlation_crop(df, select_bands):
     add_title("Mask correlation of the image crop mask", "####")
     if len(select_bands) == 0:
-        st.warning("Please select at least on band.")
+        st.warning("Please select at least one band.")
         return
-    df['is_na'] = df[crops[0]] == -1
+    df['is_na'] = df[select_bands[0]] == -1
     st.markdown("""
     There is a total of {} non-covered images over {} ({:.2f} %).
 
@@ -169,8 +168,12 @@ def correlation_crop(crops, df, select_bands):
 
 #cloudless_body()
 #cloudy_body()
-all_body()
-seasons_body()
-correlation_body()
+distribution_tab, correlation_tab = st.tabs(['Distribution of cloud %', 'Band cloud correlation'])
+with distribution_tab:
+    add_title("Cloud coverage distributions", "##")
+    all_body()
+    seasons_body()
+with correlation_tab:
+    correlation_body()
 
 # TODO: MASK

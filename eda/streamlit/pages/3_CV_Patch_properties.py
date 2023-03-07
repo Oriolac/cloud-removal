@@ -31,6 +31,7 @@ class Keeper:
 BASIC_ATTR_DICT = {
     "season": ["spring", "summer", "fall", "winter"],
     "type": ["cloudless", "cloudly"],
+    "scene": list(map(int, cloudy['scene'].unique()))
 }
 
 keeper = Keeper()
@@ -103,11 +104,16 @@ if hue != "":
 filter_key = st.sidebar.selectbox("Please, select a filter", [""] + list(possible_filters))
 if filter_key != "":
     filters = st.sidebar.multiselect("Please, filter by these options", BASIC_ATTR_DICT[filter_key])
-    last_shape = concatenated.shape[0]
-    concatenated = concatenated[concatenated[filter_key].apply(lambda x: x in filters)]
-    st.sidebar.write("By filtering, it is showing {} rows of {} ({:.2f} %)".format(concatenated.shape[0], last_shape,
-                                                                                   concatenated.shape[
-                                                                                       0] / last_shape * 100))
+    if len(filters) != 0:
+        last_shape = concatenated.shape[0]
+        concatenated = concatenated[concatenated[filter_key].apply(lambda x: x in list(map(str, filters)))]
+        st.sidebar.write(
+            "By filtering, it is showing {} rows of {} ({:.2f} %)".format(concatenated.shape[0], last_shape,
+                                                                          concatenated.shape[
+                                                                              0] / last_shape * 100))
+    else:
+        st.sidebar.warning("Any filter selected.")
+tab1, tab2, tab3 = st.tabs(['Analysis of a band', 'Comparison between bands', 'Comparison between properties'])
 
 saturation_container = st.container()
 with saturation_container:
