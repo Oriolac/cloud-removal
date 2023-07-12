@@ -1,0 +1,10 @@
+rasterio
+opencv-python
+scikit-image
+numpy
+pandas
+matplotlib
+tqdm
+scipy
+scikit-learn
+s2cloudless

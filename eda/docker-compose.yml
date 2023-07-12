@@ -1,0 +1,13 @@
+version: "3.8"
+
+services:
+  eda:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: laclasse-cr-eda
+    command: python -m eda /extraction --output /output
+    tty: true
+    volumes:
+      - /data/docker/volumes/laclasse/SEN12MS-CR/:/extraction
+      - /data/docker/volumes/laclasse/SEN12MS-CR-EDA/:/output

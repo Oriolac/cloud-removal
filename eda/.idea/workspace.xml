@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="50bb0ed6-1006-4960-963c-bba84e452d98" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/eda/indices.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eda/.idea/eda.iml" beforeDir="false" afterPath="$PROJECT_DIR$/eda/.idea/eda.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eda/__main__.py" beforeDir="false" afterPath="$PROJECT_DIR$/eda/__main__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eda/cloud.py" beforeDir="false" afterPath="$PROJECT_DIR$/eda/cloud.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eda/io.py" beforeDir="false" afterPath="$PROJECT_DIR$/eda/io.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eda/process.py" beforeDir="false" afterPath="$PROJECT_DIR$/eda/process.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/notebooks/00-Exploration.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/notebooks/00-Exploration.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/notebooks/01-HiddenObjects.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/notebooks/01-HiddenObjects.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/notebooks/03-BlurScore.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/notebooks/03-BlurScore.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/notebooks/06-Props.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/notebooks/06-Props.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/streamlit/pages/1_Clouds.py" beforeDir="false" afterPath="$PROJECT_DIR$/streamlit/pages/1_Clouds.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../extraction/src/__main__.py" beforeDir="false" afterPath="$PROJECT_DIR$/../extraction/src/__main__.py" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProjectId" id="2SL88AOBkafBbewgt582Dv42EaN" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="50bb0ed6-1006-4960-963c-bba84e452d98" name="Changes" comment="" />
+      <created>1688914338909</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1688914338909</updated>
+    </task>
+    <servers />
+  </component>
+</project>
