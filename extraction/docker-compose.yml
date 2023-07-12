@@ -1,0 +1,12 @@
+version: "3.8"
+
+services:
+  extraction:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: laclasse-cr-extraction
+    command: python -m src /extraction
+    tty: true
+    volumes:
+      - /data/docker/volumes/laclasse/SEN12MS-CR/:/extraction

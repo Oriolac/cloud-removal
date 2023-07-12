@@ -148,6 +148,10 @@
 \newacronym{psnr}{PSNR}{Peak signal-to-noise ratio}
 \newacronym{ssim}{SSIM}{Structural Similarity Index Metric}
 \newacronym{rnn}{RNN}{Recurrent Neural Network}
+\newacronym{vit}{ViT}{Vision Transformer}
+\newacronym{ltae}{L-TAE}{Lightweight Temporal Attention Encoder}
+\newacronym{tae}{TAE}{Temporal Attention Encoder}
+
 
 \def\contentsname{Índex}
 \begin{document}
@@ -230,7 +234,7 @@
 	Once set the problem, the goals of this master thesis have been:
 	\begin{itemize}
 		\item Search state-of-the-art solutions as well as frameworks that could bring new improvements and better results.
-		\item Create or search for a multi-temporal and spatial imagery to design and evaluate general solutions.
+		\item Create or search for a multi-temporal and spatial imagery to design and evaluate a model that can remove the clouds given a satellite image.
 		\item Design and implement an effective model and monitoring its training.
 		\item Evaluate the model and make a comparison with the other solutions proposed.
 	\end{itemize}
@@ -291,11 +295,18 @@ The bands can give us a various range of aspects of the orthogonal view. Several
 		\caption{LeNet-5 architecture.}
 		\label{fig:related-lenet}
 	\end{figure}
-	Being that told so, there are a lot of state-of-the-art using \gls{cnn}. In \cite{LANARAS2018305}, they create a deep learning approach to Sentinel-2 super-resolution. Their hypothesis was the existence of a complex mixture of correlations across many spectral bands over a large spatial context. Hence, the input of the model is a concatenation of the high-level resolution bands with the low-level resolution bandwidths upsampled to 10m by simple bi-linear interpolations. The model itself is a clear reference of residual networks \cite{he2016deep}. Furthermore, as in ResNet architectures, it uses skip connections to reduce the average effective path length through the network, alleviate the vanishing gradient problem and greatly accelerates the learning during the training.
+	Being that told so, there are a lot of state-of-the-art using \gls{cnn}. In \cite{LANARAS2018305}, they create a deep learning approach to Sentinel-2 super-resolution. Their hypothesis was the existence of a complex mixture of correlations across many spectral bands over a large spatial context. Hence, the input of the model is a concatenation of the high-level resolution bands with the low-level resolution bandwidths upsampled to 10m by simple bi-linear interpolations. The model itself is a clear reference of residual networks \cite{he2016deep}.
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=6cm]{imgs/relatedwork/residualblock.png}
 		\caption{Residual learning: a building block.}
+	\end{figure}
+	Residual architectures use contiguous blocks of the convolution layers with the same properties. This layers are connected also with skip connections to reduce the average effective path length through the network, alleviate the vanishing gradient problem and greatly accelerates the learning during the training.  As it can be seen in \ref{fig:related-residual-loss}, networks without skip connections are harder to train as the loss surface is to hard to navigate. \cite{NEURIPS2018_a41b3bb3}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=10cm]{imgs/relatedwork/resloss.png}
+		\caption{Loss surfaces of ResNet-56 with/without skip connections.}
+		\label{fig:related-residual-loss}
 	\end{figure}
 	Similarly, in \cite{Meraner2020}, a residual network is used with the same skip connections mechanism to bring a solution to cloud removal challenge.
 	Regarding the design of the neural network, DSen2-CR is a fully convolutional network, so it can accept input images of any spatial dimensions (\textit{m}), as it can be seen in \ref{fig:related-dsen2-cr}.
@@ -436,6 +447,27 @@ The bands can give us a various range of aspects of the orthogonal view. Several
 		\caption{Failure cases in CloudGAN attempting to removal overly clouded images over-smoothening or completely failing.}
 		\label{fig:related-cloudy-gan-fail}
 	\end{figure}
+	This might also be because of the lack of more data in the training phase or, at least, enough variability of the data. In that case, \cite{sen12mscr} provides  large data
+	set for training new cloud removal approaches capturing a diverse range of observations from all continents
+	and meteorological season. Also, they designed a cycle-GAN with two generators similar as \cite{}, but with changes of the generator of cloud-free images so that the generator receives the optical data, the three visible bands and the cloud map and outputs the cloud-free image and the cloud map prediction \ref{fig:sen12mscr-gen}. 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=13cm]{imgs/relatedwork/sen12mscr-gen-model}
+		\caption{Generator $G_{\text{cloudy} \rightarrow \text{cloudfree}}$ of \cite{sen12mscr}}
+		\label{fig:sen12mscr-gen}
+	\end{figure}
+	Regarding training, they used paired non-cloudy and cloudy optical observations, adding supervised losses to improve its performance. Secondly, they compared the performance of the model against a set of baseline models. This is important to determine whether your proposed model is significantly better than existing approaches and can provide new insights into the problem of recovering cloud-occluded information.
+	Thirdly, they retrained the models on synthetic data of generated cloudy observations and evaluate them on real data to assess their generalization performance. This is important because models that perform well on synthetic data may not always generalize well to real-world scenarios. 
+	\\\\
+	Regarding track of training, they used precision, recall and f1 score to evaluate discriminators while MAE, RMSE, PSNR, SSIM and SAM were used to evaluate the generators.
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=13cm]{imgs/relatedwork/sen12mscr-ts-gen-model}
+		\caption{Generator $G_{\text{cloudy} \rightarrow \text{cloudfree}}$ of \cite{sen12mscrts}}
+		\label{fig:sen12mscrts-gen}
+	\end{figure}
+	From a different baseline, in \cite{sen12mscrts}, they propose two models: one that predicts a cloud-free image given a sequence of cloudy optical and \gls{sar} images and a sequence-to-sequence translation model that predicts a cloud-free timeseries from cloud-covered time series.
+	\\\\
 	\gls{cnn} have worked very well for cloud removal, but latest and disruptive state-of-the-art deep learning attention-based architectures \cite{VaswaniSPUJGKP17} uncover new paths to achieve remarkable improvements and results. It has been demonstrated that transformers can excellently overcome challenges such \gls{nlp} \cite{brown2020language}, Text-To-Image Generation \cite{pmlr-v139-ramesh21a}  or Image Completion \cite{pmlr-v119-chen20s} with large datasets, great model size and enough compute.
 	\begin{figure}[H]
 		\centering
@@ -470,10 +502,126 @@ The bands can give us a various range of aspects of the orthogonal view. Several
 	\\
 	Regarding the decoder block, it has several similarities with the encoder block. They both have $N$ identical layers and a position encoding at first of all. However, multi-head attention layers of the decoder block have different job compared to the encoder. The decoder is auto-regressive and it takes the previous outputs from itself and the encoder output vector as inputs. This is because the encoder can use all the elements of the input sentence  but the decoder can only use the previous elements $\{ \, j\text{\textsuperscript{th} element} \, \, \, | \, \, \, j < i \, \}$ of the sentence. By not doing that, there would be no learning at all.
 	Therefore, the first multi-head attention layer is masked so that it prevent it from being conditioned of the future tokens. In order to do that, once having the score matrix in a head, the result will be masked before calculating the softmax. Regarding the second multi-head attention layer, it can be seen that the queries and the keys are the encoder output while the values are the output of the first attention layer of the decoder, which also are the residual connection. Then, the result is passed into a feed forward layer for further processing and finally, goes to a linear layer that access a classifier and a softmax function to turn it into a probability distribution.
+	\begin{table}[H]
+		\centering
+		\caption{Complexity per layer and number of sequential operations for different type layers. $n$ is the sequence length, $d$ is the representation dimension and $k$ is the kernel size of convolutions.}
+		\begin{tabular}{c|cc}
+			Layer Type & Complexity per layer & Sequential operations\\\hline
+			Self-Attention & $O(n^2 \cdot d)$ & $O(1)$\\
+			Recurrent & $O(n \cdot d^2)$ & $O(n)$ \\
+			Convolutional &  $O(k \cdot n \cdot d^2)$ & O(1)\\
+		\end{tabular}
+	\end{table}
+	Although transformers are great for sentence data such as text, its applications to computer vision problems do not fit as \gls{cnn} do, since the attention has a quadratic cost. For that reason, \cite{vit} created a self-attention architecture called \gls{vit} that can perform better in some cases than \gls{cnn}s reshaping the input to fit in the transformer architecture.
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=12cm]{imgs/relatedwork/vit-architecture}
+		\caption{\gls{vit} architecture}
+	\end{figure}
+	As it has been said, transformer's input is a 1D sequence. To turn the images into sequences, the 2D images $\{x | x \in \mathbb{R} ^{H \times W \times C}\}$ are reshaped into sequences of flattened 2D patches $\{x | x \in \mathbb{R}^{N \times (P^2 \times C)}\}$ to be handled, where $P$ is the resolution of each image patch and $N = \frac{HW}{P^2} $ is the number of patches. Therefore, $P$ is the input sequence length.
+	Once the splitting is done, the patches are mapped to $D$ dimensions with a trainable linear projection, since the transformer encoder uses a constant latent vector of size $D$ through all of its layers. This process is called patch embedding. The positional embedding added to the patch embedding to retain positional information and to be fed to the transformer encoder.
+	\\\\
+	A more general way to understand \gls{vit} is that this architecture attempts to capture global attention of the image by putting the patches in the positional embedding while \gls{cnn} captures pixel attention over a kernel, understanding better by nature the textures of an image. Nowadays, \gls{vit}s are popular models to solve computer vision problems, since they can capture better global self-attention. However, if they are not trained on huge datasets, the best option is to stick to ResNet or EfficientNet, since in this case \gls{vit}s cannot outperform the \gls{cnn}s.
+	Regarding image generation, in is proposed the ViTGAN with a Vanilla-\gls{vit} discriminator and a \gls{vit}-based generator, although a mixture of deconvolutional layers and global receptive fields form \gls{vit} might perform better.
+	\\\\
+	Regarding not only spatial but temporal computer vision challenges, \gls{ltae} is a network architecture that employs multi-headed self-attention mechanisms to classify remote sensing time sequences. In the \gls{tae}, the channels of the temporal inputs are distributed among several attention heads operating in parallel. Each head extracts highly-specialized temporal features which are in turn concatenated into a single representation. The proposed approach in \cite{garnot2021lightweight} modifies the \gls{tae} by distributing the channels of the temporal inputs among several compact attention heads operating in parallel, which allows for more efficient processing of time-series data.
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=12cm]{imgs/relatedwork/ltae}
+		\caption{\gls{ltae} architecture}
+	\end{figure}
+	The  \gls{tae} is a network architecture that employs multi-headed self-attention mechanisms to classify remote sensing time sequences. The channels of the temporal inputs are distributed among several attention heads operating in parallel. Each head extracts highly-specialized temporal features which are in turn concatenated into a single representation. The proposed approach modifies the \gls{tae} by distributing the channels of the temporal inputs among several compact attention heads operating in parallel, which allows for more efficient processing of time-series data. 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=15cm]{imgs/relatedwork/uncertainty}
+		\caption{\cite{uncrtaints2021ebel} model generator architecture}
+	\end{figure}
+	This architecture is then used in \cite{uncrtaints2021ebel} to aggregate the information of temporal images without needing high computational resources. \cite{uncrtaints2021ebel} proposes a multi-temporal model using \cite{sen12mscrts} dataset, achieving the best results since now. Moreover, they add the paradigm of uncertainty in the field, being the first time to show how the well-calibrated predicted uncertainties
+	enable a precise control of the reconstruction quality in the the task of multi-temporal
+	cloud-removal in optical satellite images.
 	\\
 	\\
-	Although transformers are great for sentence data such as text, 
+	
+	% VQAE Difussion
+	
 	\subsection{Academic Datasets}
+	
+	
+	
+	\section{Exploratory Data Analysis}
+	Once selected the datasets, an exploratory data analysis has been carried out to understand the hidden properties between bands from the images and the images themselves to gather enough information and make the dataset comprehensible so that the design and evaluation of deep learning models can be more straight-forward. Moreover, the EDA was aimed to provide insights into potential challenges that might be encountered during the development of the model. This stage of the thesis proposed four main challenges:
+	\begin{itemize}
+		\item Aggregating these datasets into a unified and standardized format is essential to ensure consistency and compatibility during the subsequent stages of the deep learning model development. Although they are meant to be aggregated at some point, a solution to fit the dataset schema into the actual challenge was needed.
+		\item Extracting the properties using various techniques, including image processing algorithms and statistical analysis, without getting away from the main topic and attempting not to create biases while extracting the data.
+		\item Visualizing the data can provide valuable insights but a huge amount of data extracted can be messy and create a high computation demand. 
+		\item Understanding the limitations of the dataset, such as noise, class imbalance, or variations in image quality, allowed for the identification of potential biases and the formulation of suitable mitigation strategies.
+	\end{itemize}
+	During the EDA phase, various techniques were employed to extract meaningful information from the dataset. Descriptive statistics were computed to gain a preliminary understanding of the distribution, central tendency, and spread of the data across different bands. This provided an overview of the range and variability of values within each band, allowing for an initial assessment of their significance.
+	\subsection{Properties extraction}
+	The imagery values of each band were ranged from $0$ to $10000$. Therefore, the pixels need to be normalized and scaled for a proper processing and visualization of the data. This led to a challenge since I did not want to modify the images to the point that comparison and visualization of the properties extracted would be affected. Three normalization methods were thought:
+	\begin{itemize}
+		\item MinMax Scaling, also known as feature scaling, is a method that linearly transforms the pixel values of an image to a specific range, typically between 0 and 1. 
+		\[\text{Normalized value} = \frac{\text{Pixel value} - \text{Min Value}}{\text{Max value} - \text{Min Value}}\]
+		\item Linear Stretch method. The linear stretch method is used to enhance the contrast of an image by stretching the pixel values across the a given available range.  If the pixel surpasses the 98\supindex{th} percentile, it will be 1 (or the maximum of the scaled vector). If the pixel value is under the 2\supindex{nd}, it will be 0 (or the minimum of the scaled vector). For the other pixel values, it performs the scaling operation by using interpolation, being the maximum value the 98\supindex{th} percentile and the 2\supindex{nd} the minimum.
+		\[\text{Normalized value} = \frac{\text{Ranged pixel value} - \text{2\supindex{nd} percentile}}{\text{98\supindex{nd} percentile} - \text{2\supindex{nd} percentile}}\]
+		\item Sigmoid after linear stretch method. The sigmoid after linear stretch method applies a sigmoid function to the linearly stretched pixel values to further enhance the contrast. In this formula, the slope $k$ is a parameter that controls the shape and position of the sigmoid function. The sigmoid function maps the stretched pixel values to a range between 0 and 1, enhancing the contrast in the process. By increasing the slope, the range of values can be compressed, so they get more blurred and with less contrast. This can be seen in  \ref{fig:eda-laplacian-vars-slope} and \ref{fig:eda-sigmoid-slope}.
+		\[\text{Normalized value} = \frac{1}{1 + e^{-k \cdot(\text{LinearStretch}(\text{Pixel value}))}}\]
+			\begin{figure}[H]
+			\centering
+			\includegraphics[width=9cm]{imgs/eda/sigmoid-slope-2}
+			\caption{Laplacian variance depending on the slope used in sigmoid scaling method.}
+			\label{fig:eda-laplacian-vars-slope}
+		\end{figure}
+	\end{itemize}
+	The following pictures show how the images behave after treating each scaling method:
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=15cm]{imgs/eda/scaled-methods-1}\\
+		\includegraphics[width=15cm]{imgs/eda/scaled-methods-2}
+		\caption{Scaling methods}
+		\label{fig:scaling-methods}
+	\end{figure}
+	Although it seems in \ref{fig:scaling-methods} that the best normalization is to apply is sigmoid after the linear strecth method, we can see in \ref{fig:eda-sigmoid-slope}  that this would affect the study of the properties since the data would be so compressed that the analytical results would not be as precise as it could. Therefore, the best method to apply is the linear stretch method, since there are some pixel intensities that are outliers due to the noise or other obstacles while capturing the images.
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=16cm]{imgs/eda/sigmoid-slope}
+		\caption{Sigmoid-scaled images with their RGB bands in different slopes.}
+		\label{fig:eda-sigmoid-slope}
+	\end{figure}
+	The properties compared are classified depending on how they were extracted:
+	\begin{enumerate}
+		\item Band properties of each image. Exploring properties related to individual bands helped to compare two bands given an image or different samples of images given these band properties.
+		\begin{itemize}
+			\item Descriptive statistics such as the mean, median, std and percentiles to compute  statistics for each band, providing insights into the distribution, central tendency, and spread of data values.
+			\item Contrast. Analyzing the range and variation in pixel intensities within each band to understand the degree of contrast present. There are several ways to calculate contrast, the most popular ways are:
+			\[\text{Traditional contrast} = \frac{\text{std}(\text{band})}{\text{mean}(\text{band})}\]
+			\[\text{Michelson contrast} = \frac{\text{Maximum value} - \text{Minimum value}}{\text{Maximum value} + \text{Minimum value}}\]
+			\item Blur. Assessing the level of blurriness in the images, indicating the sharpness of details captured. To extract the blurriness of the images, it has extracted the variance of the images after applying the laplacian filter.
+			\item Kernel Density Estimation (KDE). KDE helped to visualize the probability density function of each band, aiding in the identification of underlying patterns or modes.
+		\end{itemize}
+		\item True Color Image (TCI) properties of each image. Although not all the bands captured from sentinel2 are visible in human spectra, comparing properties of the RGB bands could help us humans to understand the difference in the image captures.
+		\begin{itemize}
+			\item Saturation. Examining the saturation level of colors in the TCI, which indicates the vividness or intensity of hues. To get the saturation it has been changed from RGB to HSV color space.
+			\item Temperature. Assessing the temperature or color balance of the TCI, providing information about the overall warmth or coolness of the image. To capture the temperature the images have been converted from RGB to CIE 1931 XYZ color space.
+		\end{itemize}
+		\item  The cloud coverage of each image was captured using the library  
+		\begin{itemize}
+			\item Percentage of each image. This quantifies the extent to which each image is covered by clouds, enabling the assessment of potential challenges posed by cloud interference.
+			\item The MSE between cloud-free reference images and their corresponding cloudy versions was calculated allowing us for the evaluation of image quality degradation due to cloud cover.
+		\end{itemize}
+		\item An exploration of the indices showed in \ref{tab:sentinel2-bands} helped to reveal additional characteristics or features within the images and differences between the season and regions of interest.
+	\end{enumerate}
+	
+	\subsection{Web App}
+	Visualizations played a crucial role in revealing the inherent structure and characteristics of the dataset. By visually inspecting the images, patterns and trends specific to cloud formations were discerned, aiding in the development of strategies to tackle cloud removal effectively. Furthermore, feature engineering techniques related to computer vision and, specifically, satellite imagery were explored to derive additional meaningful features from the dataset. This involved transforming, aggregating, or combining existing features to capture important characteristics of the data. Since the variability of the cases where to compare the dataset and how extremely hard was to visualize correctly and effectively all the properties data extracted, the best decision to make was creating a web app to help the user experience of the EDA. 
+	\\
+	\\
+	The app is powered by Streamlit. The library is a powerful and user-friendly Python library that simplifies the process of building interactive web applications for data analysis and machine learning. It provides a straightforward way to create custom web interfaces directly from Python scripts, enabling users to easily visualize and explore data, create interactive dashboards, and share their work with others.
+	\\\\
+	Streamlit works by allowing developers to write Python code that defines the various components of their web application, such as widgets, plots, and text. These components are then rendered in a web browser, creating an intuitive and interactive user interface. The library takes care of handling the communication between the Python backend and the frontend, making it seamless for users to interact with the application.
+	\subsection{Analysis}
+	\subsection{Conclusions}
+	
 	\section{Model architecture}
 	
 	\section{Experiments \& results}

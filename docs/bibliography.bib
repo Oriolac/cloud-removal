@@ -39,6 +39,20 @@
 	year={2014}
 }
 
+@inproceedings{NEURIPS2018_a41b3bb3,
+	author = {Li, Hao and Xu, Zheng and Taylor, Gavin and Studer, Christoph and Goldstein, Tom},
+	booktitle = {Advances in Neural Information Processing Systems},
+	editor = {S. Bengio and H. Wallach and H. Larochelle and K. Grauman and N. Cesa-Bianchi and R. Garnett},
+	pages = {},
+	publisher = {Curran Associates, Inc.},
+	title = {Visualizing the Loss Landscape of Neural Nets},
+	url = {https://proceedings.neurips.cc/paper/2018/file/a41b3bb3e6b050b6c9067c67f663b915-Paper.pdf},
+	volume = {31},
+	year = {2018}
+}
+
+
+
 @inproceedings{VaswaniSPUJGKP17,
 	title = {Attention is All you Need},
 	author = {Ashish Vaswani and Noam Shazeer and Niki Parmar and Jakob Uszkoreit and Llion Jones and Aidan N. Gomez and Lukasz Kaiser and Illia Polosukhin},
@@ -147,6 +161,12 @@
 }
 
 
+@inproceedings{vit,
+	title	= {An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale},
+	author	= {Alexander Kolesnikov and Alexey Dosovitskiy and Dirk Weissenborn and Georg Heigold and Jakob Uszkoreit and Lucas Beyer and Matthias Minderer and Mostafa Dehghani and Neil Houlsby and Sylvain Gelly and Thomas Unterthiner and Xiaohua Zhai},
+	year	= {2021}
+}
+
 
 
 ######### DATASETS
@@ -194,8 +214,10 @@
 	keywords = {Sentinel-2, Super-resolution, Sharpening of bands, Convolutional neural network, Deep learning},
 	abstract = {The Sentinel-2 satellite mission delivers multi-spectral imagery with 13 spectral bands, acquired at three different spatial resolutions. The aim of this research is to super-resolve the lower-resolution (20 m and 60 m Ground Sampling Distance – GSD) bands to 10 m GSD, so as to obtain a complete data cube at the maximal sensor resolution. We employ a state-of-the-art convolutional neural network (CNN) to perform end-to-end upsampling, which is trained with data at lower resolution, i.e., from 40 → 20 m, respectively 360 → 60 m GSD. In this way, one has access to a virtually infinite amount of training data, by downsampling real Sentinel-2 images. We use data sampled globally over a wide range of geographical locations, to obtain a network that generalises across different climate zones and land-cover types, and can super-resolve arbitrary Sentinel-2 images without the need of retraining. In quantitative evaluations (at lower scale, where ground truth is available), our network, which we call DSen2, outperforms the best competing approach by almost 50% in RMSE, while better preserving the spectral characteristics. It also delivers visually convincing results at the full 10 m GSD.}
 }
-
 @COMMENT https://www.sciencedirect.com/science/article/pii/S0924271618302636
+
+
+
 
 @article{Meraner2020,
 	title = "Cloud removal in Sentinel-2 imagery using a deep residual neural network and SAR-optical data fusion",
@@ -222,7 +244,7 @@
 	ARTICLE-NUMBER = {1342},
 	URL = {https://www.mdpi.com/2072-4292/14/6/1342},
 	ISSN = {2072-4292},
-	ABSTRACT = {Cloud cover remains a significant limitation to a broad range of applications relying on optical remote sensing imagery, including crop identification/yield prediction, climate monitoring, and land cover classification. A common approach to cloud removal treats the problem as an inpainting task and imputes optical data in the cloud-affected regions employing either mosaicing historical data or making use of sensing modalities not impacted by cloud obstructions, such as SAR. Recently, deep learning approaches have been explored in these applications; however, the majority of reported solutions rely on external learning practices, i.e., models trained on fixed datasets. Although these models perform well within the context of a particular dataset, a significant risk of spatial and temporal overfitting exists when applied in different locations or at different times. Here, cloud removal was implemented within an internal learning regime through an inpainting technique based on the deep image prior. The approach was evaluated on both a synthetic dataset with an exact ground truth, as well as real samples. The ability to inpaint the cloud-affected regions for varying weather conditions across a whole year with no prior training was demonstrated, and the performance of the approach was characterised.},
+	ABSTRACT = {Cloud cover remains a significant limitation to a broad range of applications relying on optical remote sensing imagery, including crop identification/yield prediction, climate monitoring, and land cover classification. A common approach to cloud removal treats the problem as an inpainting task and imputes optical data in the cloud-affected regions employing either mosaicing historical data or making use of sensing modalities not impacted by cloud obstructions, such as SAR. Recently, deep learning approaches have been explored in these applications; however, the majority of reported solutions rely on external learning practices, i.e., models trained on fixed datasets. Although these models perform well within the context of a particular dataset, a significant risk of spatial and temporal overfitting exists when applied in different locations or at different times. Here, cloud removal was implemented within an internal learning regime through an inpainting technique based on the deep image prior. The approach was evaluated on both a synthetic  with an exact ground truth, as well as real samples. The ability to inpaint the cloud-affected regions for varying weather conditions across a whole year with no prior training was demonstrated, and the performance of the approach was characterised.},
 	DOI = {10.3390/rs14061342}
 }
 @COMMENT Multi-temporal dataset of india and scotland, great results. DSEN2-CR is cited. https://www.mdpi.com/2072-4292/14/6/1342/htm
@@ -234,3 +256,46 @@
 	journal={arXiv preprint arXiv:1912.06838},
 	year={2019}
 }
+
+@article{garnot2021lightweight,
+	title={Lightweight Temporal Self-Attention for Classifying Satellite Images Time Series},
+	author={Garnot, Vincent Sainte Fare and Landrieu, Loic},
+	journal={arXiv preprint arXiv:2103.01157},
+	year={2021}
+}
+
+@article{uncrtaints2021ebel,
+	title={UnCRtainTS: Uncertainty Quantification for Cloud Removal in Optical Satellite Time Series},
+	author={Ebel, Patrick and Sainte Fare Garnot, Vivien and Schmitt, Michael and Wegner, Jan Dirk and Zhu, Xiao Xiang},
+	journal={arXiv preprint arXiv:2103.01902},
+	year={2021}
+}
+
+
+@ARTICLE{sen12mscrts,
+	
+	author={Ebel, Patrick and Xu, Yajin and Schmitt, Michael and Zhu, Xiao Xiang},
+	
+	journal={IEEE Transactions on Geoscience and Remote Sensing}, 
+	
+	title={SEN12MS-CR-TS: A Remote-Sensing Data Set for Multimodal Multitemporal Cloud Removal}, 
+	
+	year={2022},
+	
+	volume={60},
+	
+	number={},
+	
+	pages={1-14},
+	
+	doi={10.1109/TGRS.2022.3146246}}
+
+
+INTERESANT: https://sci-hub.st/10.1109/cvprw.2019.00189
+
+
+########## USE CASES
+
+https://www.isikdogan.com/files/isikdogan2019_deepwatermap_v2.pdf
+
+ 
