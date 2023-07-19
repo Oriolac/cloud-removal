@@ -522,8 +522,8 @@ The bands can give us a various range of aspects of the orthogonal view. Several
 	The encoded distributions are chosen to be normal so that the encoder can be trained to return the mean and covariance matrix. This makes a way of both local and global regularization of the latent space respectively. Hence,the loss will not be only about the reconstruction of the data in the last layer, called \textit{reconstruction term}, but also how the latent space is organized by making the latent space close to a standard normal distribution, called the \textit{regularization term}. The latter will be calculated by how distant is from the gaussian distribution, using the \textit{Kullback-Leibler divergence}, which is expressed in terms of the means and the covariance matrices of the two distributions.
 	\begin{figure}[H]
 		\begin{align*}
-			\mathcal{L}_{\text{VAE}} &= \text{Reconstruction term} + \text{Regularization term}\\
-			&= (\frac{1}{N} \sum_{i=1}^{N} \| x_i - \bar{x}_i \|^2) +  \\
+			\mathcal{L}_{\text{VAE}} &= \text{Reconstruction term} &+&\qquad \text{Regularization term}\\
+			&= (\frac{1}{N} \sum_{i=1}^{N} \| x_i - \bar{x}_i \|^2) &+& \qquad \sum_{j=1}^{J} \left(\mu_j^2 + \sigma_j^2  - \log(\sigma_j)  - 1 \right)
 		\end{align*}
 		\caption{Loss in \gls{vae}}
 	\end{figure}
