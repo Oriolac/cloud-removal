@@ -53,7 +53,7 @@
 \usepackage{pdfpages}
 \usepackage{array}
 \usepackage{eurosym}
-
+\usetikzlibrary{mindmap}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%% UTIL COMMANDS %%%%%%%%%%%%  
@@ -67,7 +67,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%% CONFIG FILE %%%%%%%%%%%%%
 
-\nc{\mytitle}{Economic Viability}
+\nc{\mytitle}{Generative deep learning based models for cloud removal satellite imagery}
 \nc{\mysubtitle}{Bayesian Inference}
 \nc{\authors}{\textit{Oriol Alàs Cercós}}
 \nc{\datetime}{25\supindex{th} of May, 2022}
@@ -151,6 +151,7 @@
 \newacronym{vit}{ViT}{Vision Transformer}
 \newacronym{ltae}{L-TAE}{Lightweight Temporal Attention Encoder}
 \newacronym{tae}{TAE}{Temporal Attention Encoder}
+\newacronym{vae}{VAE}{Variational AutoEncoder}
 
 
 \def\contentsname{Índex}
@@ -286,6 +287,7 @@ The bands can give us a various range of aspects of the orthogonal view. Several
 		\[\text{NDSI} = \frac{\text{B3} - \text{B11}}{\text{B3} + \text{B11}}\]
 \end{description}
 	\subsection{Related work and state-of-the-art}
+	\subsubsection{Deep Learning \& CNN}
 	Deep learning have been a popular and efficient technique to solve challenges from satellite imagery. Specifically, \gls{cnn} have been the main architecture of neural networks to provide a solution from image-based problems. What differentiates \gls{cnn} from the standard \gls{mlp} is that they have hidden layers called convolutional layers, which are able to take patterns from their inputs using filters. A filter can be considered a relatively small matrix that slides from the input by operating with the weights of the matrix. This action is called \textit{convolving }and, in its simplest case, the output value of a layer with ($N, C_{in}, H, W$) as the input and ($N, C_{out}, H_{out}, W_{out}$) as the output is described as:
 	\[out(N_i, C_{out_j}) = bias(C_{out_j}) + \sum_{k=0}^{C_{in} - 1} weight(C_{out_j}, k) \star \, input(N_i, k)\]
 	where $\star$ is the 2D cross-correlation operator, $N$ is the batch size, $C$ denotes the number of channels and $H$ and $W$ are the height and width in pixels of the planes respectively. A graphic representation of a CNN architecture can be seen in \ref{fig:related-lenet}
@@ -326,7 +328,8 @@ The bands can give us a various range of aspects of the orthogonal view. Several
 		\caption{Examples of the influence of SAR data. Being (a, f) cloudy images, (b, g), SAR images, (c, h), the target cloudless images, (d, i), the synthesized images without SAR input data and (e, j) the predictions using SAR data as input.}
 		\label{fig:related-dsen2-cr-predictions}
 	\end{figure}
-	Improvements have been found using \gls{gan} \cite{goodfellow2014generative}, which is a model architecture that belongs to the set of generative models. \gls{gan} is an unsupervised model made up of two neural networks: the generator and the discriminator. The idea is based on a game theoretic scenario in which the generator network must compete against an adversary. While the generator network produces samples, the aim of the discriminator is to distinguish between the real samples and the drawn by the generator. The discriminator is a binary classifier trying not to be fooled. 
+	\subsubsection{Generative Adversarial Networks}
+	Improvements have been found using \gls{gan} \cite{goodfellow2014generative}, which is a model architecture that belongs to the set of generative models. Generative models are a class of machine learning that learn a representation of the data trained on and they model the data itself. \gls{gan} is an unsupervised model made up of two neural networks: the generator and the discriminator. The idea is based on a game theoretic scenario in which the generator network must compete against an adversary. While the generator network produces samples, the aim of the discriminator is to distinguish between the real samples and the drawn by the generator. The discriminator is a binary classifier trying not to be fooled. 
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=11cm]{imgs/relatedwork/gan.png}
@@ -467,7 +470,39 @@ The bands can give us a various range of aspects of the orthogonal view. Several
 		\label{fig:sen12mscrts-gen}
 	\end{figure}
 	From a different baseline, in \cite{sen12mscrts}, they propose two models: one that predicts a cloud-free image given a sequence of cloudy optical and \gls{sar} images and a sequence-to-sequence translation model that predicts a cloud-free timeseries from cloud-covered time series.
+	\subsubsection{Other generative models}
+	Ideally, generative models should satisfy the following key requirements in a real environment:
+	\begin{description}
+		\item[High quality samples] refers to those samples that captures the underlying patterns and structures present in the data making them indistinguishable from human observers.
+		\item[Fast Sampling] is about the efficiency of image generation and the computational overhead that can cause generative models.
+		\item[Mode Coverage/Diversity] points out how the model is able to generate a full range of mods and diverse patterns present in the training data.
+	\end{description}
+	\begin{figure}[H]
+		\centering
+	\begin{tikzpicture}[align=center]
+		\node (entropy) at (0, 3) [concept, concept color=cyan!30, minimum size=2.5cm] {High quality \\samples};
+		\node (enthalpy) at (2, 0) [concept, concept color=orange!50, minimum size=2.5cm] {Mode \\ Coverage/\\Diversity};
+		\node (free-energy) at (-2, 0) [concept, concept color=green!30, minimum size=2.5cm] {Fast \\Sampling};
+		
+		\path (enthalpy) to[circle connection bar switch color=from (orange!50) to (green!30)] node[below=9ex, font=\small] {Likelihood-based models\\(VAE \& Normalizing flows)} (free-energy);
+		\path (entropy) to[circle connection bar switch color=from (cyan!30) to (orange!50)] node[right=10ex, above=3ex, font=\small] {Denoising\\Diffusion\\Models} (enthalpy);
+		\path (free-energy) to[circle connection bar switch color=from (green!30) to (cyan!30)] node[left=10ex, above=3ex, font=\small] {Generative\\Adversarial\\Networks} (entropy);
+		
+	\end{tikzpicture}
+	\caption{Generative Learning Trilemma}
+	\label{fig:related-generative-learning-trilemma}
+	\end{figure}
+	Since now, we have talked a lot about \gls{gan}s, but there are other architectures of generative models. We have seen that \gls{gan}s have serious problems with \textit{mode collapse}, which affects the diversity of synthetic data. While likelihood-based models and denoising diffusion models can cover a wide spectrum of possibilities, they suffer from low sample quality and thousands of network evaluations respectively. Most of the deep generative learning focus on high-quality definition, although all the requirements are highly important and key factors in a real environment. This is called the \textit{generative learning trilemma} \ref{fig:related-generative-learning-trilemma}.
 	\\\\
+	Likelihood-based models are alternatives to GANs that can cover a wide range of possibilities since they focus on estimating the likelihood or probability distribution of the data while training. There are several types of likelihood-based models although we will focus on \gls{vae}. The architecture of autoencoders are quite simple, they consist of an encoder, a smaller feature vector also called \textit{latent vector} $\bar{x}$ and a decoder. Therefore, the main goal of the encoder is to comprise the input vector while the decoder attempts to perform the conversion from lower to higher dimensional data. Hence, the best purpose of autoencoders is dimensionality reduction given its architecture. Then, the main purpose is to find the best set of encoder/decoder that keeps the maximum information with the less reconstruction error while decoding. In fact, one of the most popular usages of autoencoders in computer vision is the image reconstruction due to their architecture.
+	\\\\
+	Let's assume an autoencoder that both encoder and decoder have only one layer without non-linearity. In that sense, we can see clearly a link with PCA since we are looking for the best linear subspace to project data on with as few information loss as possible. However, deep neural networks contain non-linear layers\footnote{Non-linear layers allow to learn complex relationships. Some of them are used as activation functoins.}. Then, the more complex of autoencoders architecture, the more they can proceed to a high dimensional reduction while keeping the loss low. Despite its effectiveness in reducing and reconstruction the latent vector, the complexity of deep neural networks and the non-linear layers can make the latent vector hard or even impossible to understand.  Hence, biased, tailed or imbalanced distributions can make autoencoders hard to cover equally all kind of classes and groups from the possible data. 
+	\\
+	\\
+	\\
+	\\
+	On the other hand, 
+	\subsubsection{Transformers in computer vision}
 	\gls{cnn} have worked very well for cloud removal, but latest and disruptive state-of-the-art deep learning attention-based architectures \cite{VaswaniSPUJGKP17} uncover new paths to achieve remarkable improvements and results. It has been demonstrated that transformers can excellently overcome challenges such \gls{nlp} \cite{brown2020language}, Text-To-Image Generation \cite{pmlr-v139-ramesh21a}  or Image Completion \cite{pmlr-v119-chen20s} with large datasets, great model size and enough compute.
 	\begin{figure}[H]
 		\centering
@@ -539,29 +574,43 @@ The bands can give us a various range of aspects of the orthogonal view. Several
 	This architecture is then used in \cite{uncrtaints2021ebel} to aggregate the information of temporal images without needing high computational resources. \cite{uncrtaints2021ebel} proposes a multi-temporal model using \cite{sen12mscrts} dataset, achieving the best results since now. Moreover, they add the paradigm of uncertainty in the field, being the first time to show how the well-calibrated predicted uncertainties
 	enable a precise control of the reconstruction quality in the the task of multi-temporal
 	cloud-removal in optical satellite images.
-	\\
-	\\
-	
+
 	% VQAE Difussion
-	
+	\subsection{Decision on thesis alignment}
+	After reviewing the state-of-the-art proposals and the trend of current deep learning architectures, the objectives regarding model design process that align better in the context of this thesis are the following:
+	\begin{itemize}
+		\item Use \gls{sar} and Sentinel2 data in most of the model architectures since it is the most effective way to remove clouds.
+		\item Train some models without \gls{sar} data and check the difference of it.
+		\item Do not use architectures that need temporal data.
+		\item Try at least one of each type of generative models in the following order: \gls{vae}, \gls{gan} and denoising diffusion models.
+		\item Try one \gls{gan} with a \gls{vit} as a discriminator and compare the behavior between other \gls{gan}.
+	\end{itemize}
 	\subsection{Academic Datasets}
-	
-	
-	
+	Several public datasets for cloud removal have been proposed over the recent years. In the following section, we will review a few of them and, finally, select those who are more aligned to the thesis and can be merged.
+	\\
+	\\
+	The first public dataset published, called \texttt{RICE}, was described in \cite{rice}. Actually, it can be considered as two datasets, since there are two quite different parts: \texttt{RICE1} and \texttt{RICE2}. While \texttt{RICE1} contains 500 pairs of images\footnote{Each pair contains a cloudy and a cloudless image.} of $512 \times 512$ from Google Earth, \texttt{RICE2} contains 450 sets of images from Landsat 8 OLI/TIRS, being each set three images of $512 \times 512$ px: a cloudless image and a cloudy one with its mask. Compared to the following datasets, the size of both is relatively small and the data of them is spatio-temporal homogeneous. For that reason and since they are not from Sentinel-2, they have been discarded.
+	\\
+	\\
+	\cite{sarukkai2019cloud} introduces two novel datasets contains nearly $10000$ paired Sentinel-2 images of $256 \times 256$ px	drawn from 17800 distinct tiles worldwide. The cloud cover for each cloudy image is between 10\% and 30\%. It excludes the images with insufficient visible ground upon manual inspection and they restrict the percentage of images of ocean being no more than 10 \% of the dataset. The other dataset contains 3130 sets of 3 cloudy images and a cloud-free image of the same region.
 	\section{Exploratory Data Analysis}
 	Once selected the datasets, an exploratory data analysis has been carried out to understand the hidden properties between bands from the images and the images themselves to gather enough information and make the dataset comprehensible so that the design and evaluation of deep learning models can be more straight-forward. Moreover, the EDA was aimed to provide insights into potential challenges that might be encountered during the development of the model. This stage of the thesis proposed four main challenges:
 	\begin{itemize}
 		\item Aggregating these datasets into a unified and standardized format is essential to ensure consistency and compatibility during the subsequent stages of the deep learning model development. Although they are meant to be aggregated at some point, a solution to fit the dataset schema into the actual challenge was needed.
 		\item Extracting the properties using various techniques, including image processing algorithms and statistical analysis, without getting away from the main topic and attempting not to create biases while extracting the data.
-		\item Visualizing the data can provide valuable insights but a huge amount of data extracted can be messy and create a high computation demand. 
-		\item Understanding the limitations of the dataset, such as noise, class imbalance, or variations in image quality, allowed for the identification of potential biases and the formulation of suitable mitigation strategies.
+		\item Visualizing the data can provide valuable insights but a huge amount of data extracted can be messy and create a high computational demand. 
+		\item Understanding the limitations of the datasets, such as noise, class imbalance, or variations in image quality, allowed for the identification of potential biases and the formulation of suitable mitigation strategies.
 	\end{itemize}
 	During the EDA phase, various techniques were employed to extract meaningful information from the dataset. Descriptive statistics were computed to gain a preliminary understanding of the distribution, central tendency, and spread of the data across different bands. This provided an overview of the range and variability of values within each band, allowing for an initial assessment of their significance.
-	\subsection{Properties extraction}
-	The imagery values of each band were ranged from $0$ to $10000$. Therefore, the pixels need to be normalized and scaled for a proper processing and visualization of the data. This led to a challenge since I did not want to modify the images to the point that comparison and visualization of the properties extracted would be affected. Three normalization methods were thought:
+	By visually inspecting the images, patterns and trends specific to cloud formations must be discerned, aiding in the development of strategies to tackle cloud removal effectively. Furthermore, feature engineering techniques were explored to derive additional meaningful features from the dataset. This involved transforming, aggregating, or combining existing features to capture important characteristics of the data. After each information was discovered, this steps were not considered to be sequential but concurrent phases to incrementally learn and study the data. Therefore, the following subsections must be interpreted as chapters of a story of the analysis rather than separated and independent subsections.
+	\subsection{Properties extraction and visualization of the first dataset}
+	At first, I started creating a data exploration of \texttt{SEN12MS-CR} \cite{sen12mscr}), since it is the most aligned dataset. Once extracted and analyzed the data, merging it to the other data was thought to be more straight-forward.
+	\\\\
+	The first step to take at this stage was to take care of the pixel intensities in order to visualize and extract the information properly. The imagery values of each band were ranged from $0$ to $10000$. Therefore, the pixels need to be normalized and scaled for a proper processing and visualization of the data. This led to a challenge since I did not want to modify the images to the point that comparison or visualization of the properties extracted would be affected. Three normalization methods were thought:
 	\begin{itemize}
 		\item MinMax Scaling, also known as feature scaling, is a method that linearly transforms the pixel values of an image to a specific range, typically between 0 and 1. 
 		\[\text{Normalized value} = \frac{\text{Pixel value} - \text{Min Value}}{\text{Max value} - \text{Min Value}}\]
+		Although this preserves the distribution of the pixel intensities of images for processing, this method is not proper for visualization since outliers can affect the visualization of the data.
 		\item Linear Stretch method. The linear stretch method is used to enhance the contrast of an image by stretching the pixel values across the a given available range.  If the pixel surpasses the 98\supindex{th} percentile, it will be 1 (or the maximum of the scaled vector). If the pixel value is under the 2\supindex{nd}, it will be 0 (or the minimum of the scaled vector). For the other pixel values, it performs the scaling operation by using interpolation, being the maximum value the 98\supindex{th} percentile and the 2\supindex{nd} the minimum.
 		\[\text{Normalized value} = \frac{\text{Ranged pixel value} - \text{2\supindex{nd} percentile}}{\text{98\supindex{nd} percentile} - \text{2\supindex{nd} percentile}}\]
 		\item Sigmoid after linear stretch method. The sigmoid after linear stretch method applies a sigmoid function to the linearly stretched pixel values to further enhance the contrast. In this formula, the slope $k$ is a parameter that controls the shape and position of the sigmoid function. The sigmoid function maps the stretched pixel values to a range between 0 and 1, enhancing the contrast in the process. By increasing the slope, the range of values can be compressed, so they get more blurred and with less contrast. This can be seen in  \ref{fig:eda-laplacian-vars-slope} and \ref{fig:eda-sigmoid-slope}.
@@ -581,14 +630,20 @@ The bands can give us a various range of aspects of the orthogonal view. Several
 		\caption{Scaling methods}
 		\label{fig:scaling-methods}
 	\end{figure}
-	Although it seems in \ref{fig:scaling-methods} that the best normalization is to apply is sigmoid after the linear strecth method, we can see in \ref{fig:eda-sigmoid-slope}  that this would affect the study of the properties since the data would be so compressed that the analytical results would not be as precise as it could. Therefore, the best method to apply is the linear stretch method, since there are some pixel intensities that are outliers due to the noise or other obstacles while capturing the images.
+	Regarding data processing for training, the best method to use is the MinMax feature scaling, since it preserves the intensity distribution and range of the values although its image visualization is poor.
+	\\
+	\\
+	Regarding data visualization and general data extraction, although it seems in \ref{fig:scaling-methods} that the best normalization to apply is sigmoid after the linear stretch method, we can see in \ref{fig:eda-sigmoid-slope} that this would affect the study of the properties since the data would be so compressed that the analytical and visual results would not be as precise as it could. Therefore, the best method to carry out is the linear stretch method, since there are some pixel intensities that are outliers due to the noise or other obstacles while capturing the images.
+	\\
+	\\
+	Moreover, it has been thought the normalization method as a parameter to use when training. The comparison of the methods will be useful to know which method is better to fit an image in a deep learning model.
 	\begin{figure}[H]
 		\centering
 		\includegraphics[width=16cm]{imgs/eda/sigmoid-slope}
 		\caption{Sigmoid-scaled images with their RGB bands in different slopes.}
 		\label{fig:eda-sigmoid-slope}
 	\end{figure}
-	The properties compared are classified depending on how they were extracted:
+	The properties compared in the first dataset are classified depending on how they were extracted:
 	\begin{enumerate}
 		\item Band properties of each image. Exploring properties related to individual bands helped to compare two bands given an image or different samples of images given these band properties.
 		\begin{itemize}
@@ -611,19 +666,22 @@ The bands can give us a various range of aspects of the orthogonal view. Several
 		\end{itemize}
 		\item An exploration of the indices showed in \ref{tab:sentinel2-bands} helped to reveal additional characteristics or features within the images and differences between the season and regions of interest.
 	\end{enumerate}
-	
-	\subsection{Web App}
-	Visualizations played a crucial role in revealing the inherent structure and characteristics of the dataset. By visually inspecting the images, patterns and trends specific to cloud formations were discerned, aiding in the development of strategies to tackle cloud removal effectively. Furthermore, feature engineering techniques related to computer vision and, specifically, satellite imagery were explored to derive additional meaningful features from the dataset. This involved transforming, aggregating, or combining existing features to capture important characteristics of the data. Since the variability of the cases where to compare the dataset and how extremely hard was to visualize correctly and effectively all the properties data extracted, the best decision to make was creating a web app to help the user experience of the EDA. 
+	The analysis was ideal as a first step but hard to visualize due to the high amount of properties collected and its diversity of nature. Visualizations played a crucial role in revealing the inherent structure and characteristics of the dataset and for that reason, a first glance of the data should be done interactively. 
+	Since the variability of the cases where to compare the dataset and how extremely hard was to visualize correctly and effectively all the properties data extracted, the best decision to make was creating a web app to help the user experience of the EDA. 
 	\\
 	\\
-	The app is powered by Streamlit. The library is a powerful and user-friendly Python library that simplifies the process of building interactive web applications for data analysis and machine learning. It provides a straightforward way to create custom web interfaces directly from Python scripts, enabling users to easily visualize and explore data, create interactive dashboards, and share their work with others.
+	The app is powered by Streamlit. The library is a powerful and user-friendly python library that simplifies the process of building interactive web applications for data analysis and machine learning. It provides a straightforward way to create custom web interfaces directly from Python scripts, enabling users to easily visualize and explore data, create interactive dashboards, and share their work with others.
 	\\\\
-	Streamlit works by allowing developers to write Python code that defines the various components of their web application, such as widgets, plots, and text. These components are then rendered in a web browser, creating an intuitive and interactive user interface. The library takes care of handling the communication between the Python backend and the frontend, making it seamless for users to interact with the application.
+	Streamlit works by allowing developers to write Python code that defines the various components of the web application, such as widgets, plots, and text. These components are then rendered in a web browser, creating an intuitive and interactive user interface. The library takes care of handling the communication between the Python backend and the frontend, making it seamless for users to interact with the application.
+	\\\\
+	
 	\subsection{Analysis}
 	\subsection{Conclusions}
 	
-	\section{Model architecture}
-	
+	\section{Model training pipeline}
+	% MLFLOw
+	% DataParallel
+	% ModelParallel
 	\section{Experiments \& results}
 	\section{Conclusions}
 	\section{Bibliography}
