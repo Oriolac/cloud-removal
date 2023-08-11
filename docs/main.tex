@@ -152,7 +152,7 @@
 \newacronym{ltae}{L-TAE}{Lightweight Temporal Attention Encoder}
 \newacronym{tae}{TAE}{Temporal Attention Encoder}
 \newacronym{vae}{VAE}{Variational AutoEncoder}
-
+\newacronym{ddm}{DDM}{Denoising Diffusion Model}
 
 \def\contentsname{Índex}
 \begin{document}
@@ -492,7 +492,7 @@ The bands can give us a various range of aspects of the orthogonal view. Several
 	\caption{Generative Learning Trilemma}
 	\label{fig:related-generative-learning-trilemma}
 	\end{figure}
-	Since now, we have talked a lot about \gls{gan}s, but there are other architectures of generative models. We have seen that \gls{gan}s have serious problems with \textit{mode collapse}, which affects the diversity of synthetic data. While likelihood-based models and denoising diffusion models can cover a wide spectrum of possibilities, they suffer from low sample quality and thousands of network evaluations respectively. Most of the deep generative learning focus on high-quality definition, although all the requirements are highly important and key factors in a real environment. This is called the \textit{generative learning trilemma} \ref{fig:related-generative-learning-trilemma}.
+	Since now, we have talked a lot about \gls{gan}s, but there are other architectures of generative models. We have seen that \gls{gan}s have serious problems with \textit{mode collapse}, which affects the diversity of synthetic data. While likelihood-based models and \gls{ddm} can cover a wide spectrum of possibilities, they suffer from low sample quality and thousands of network evaluations respectively. Most of the deep generative learning focus on high-quality definition, although all the requirements are highly important and key factors in a real environment. This is called the \textit{generative learning trilemma} \ref{fig:related-generative-learning-trilemma}.
 	\\\\
 	Likelihood-based models are alternatives to GANs that can cover a wide range of possibilities since they focus on estimating the likelihood or probability distribution of the data while training. There are several types of likelihood-based models although we will focus on \gls{vae}. The architecture of autoencoders are quite simple, they consist of an encoder, a smaller feature vector also called \textit{latent vector} $z$ and a decoder \ref{fig:related-autoencoder}. Therefore, the main goal of the encoder is to comprise the input vector $x$ while the decoder attempts to perform the conversion from lower to higher dimensional data, being the output vector $\bar{x}$. Hence, the best purpose of autoencoders is dimensionality reduction given its architecture. Then, the main purpose is to find the best set of encoder/decoder that keeps the maximum information with the less reconstruction error while decoding. In fact, one of the most popular usages of autoencoders in computer vision is the image reconstruction due to their architecture.
 	\begin{figure}[H]
@@ -509,11 +509,8 @@ The bands can give us a various range of aspects of the orthogonal view. Several
 		\caption{MSE loss in autoencoders}
 	\end{figure}
 	Let's assume an autoencoder that both encoder and decoder have only one layer without non-linearity. In that sense, we can see clearly a link with PCA since we are looking for the best linear subspace to project data on with as few information loss as possible. However,  deep neural networks comes with also non-linear layers\footnote{Non-linear layers allow to learn complex relationships. Some of them are used as activation functions.}. The more complex of autoencoders architecture, the more they can proceed to a high dimensionality reduction while keeping the loss low. In an ideal case, if the encoder and the decoder have enough degrees of freedom and infinite power, the latent vector could be reduced to 1. Nevertheless, the dimensionality reduction comes with a price. First of all, we will lack of interpretable structures in the latent space. Secondly, the major part of the data structure information will not be in a reduced representation but in arbitrary one without any context of the patterns that the autoencoder could infer. Therefore, it is important to control and adjust the depth and the latent space dimensions depending on the final purpose.
-	\\\\
-		Let's assume an autoencoder that both encoder and decoder have only one layer without non-linearity. In that sense, we can see clearly a link with PCA since we are looking for the best linear subspace to project data on with as few information loss as possible. However, deep neural networks contain non-linear layers\footnote{Non-linear layers allow to learn complex relationships. Some of them are used as activation functoins.}. Then, the more complex of autoencoders architecture, the more they can proceed to a high dimensional reduction while keeping the loss low. Despite its effectiveness in reducing and reconstruction the latent vector, the complexity of deep neural networks and the non-linear layers can make the latent vector hard or even impossible to understand. Hence, new restrictions must be introduced in order to tackle biased, tailed or imbalanced distributions that can make autoencoders hard to cover equally all kind of classes an groups from the possible data. 
 	\\
 	\\
-	One popular way to make restrictions is to constraint the output by using probabilistic models. KL Divergence, short for Kullback-Leibler Divergence, is a measure of how one probability distribution differs from a second, reference probability distribution. It's commonly used in various fields, including information theory, statistics, and machine learning. In the context of likelihood-based models like \gls{vae}, KL Divergence plays a crucial role in training and regularization. \gls{vae}s are designed to learn a low-dimensional representation of data, referred to as the latent vector, while also generating new data samples that resemble the input data. 
 	At this point, we have learned the surface from autoencoders, but how do they fit in image generation? Once the autoencoder has been trained, we have both encoder and decoder with the weights to reconstruct the data. At first, we might think that changing the latent vector we could take a point randomly from the space and decode it to get a new content. Although that could work, the regularity of the latent space for autoencoders is hard since it depends on several factors such as the data distribution, the latent space dimension and the architecture of the encoder. To sum up, there will be several biases that we are not able to control. 
 	\\
 	\\
@@ -523,7 +520,15 @@ The bands can give us a various range of aspects of the orthogonal view. Several
 		\item A point is generated given the distribution encoded.
 		\item The sampled point is decoded so the reconstruction and regularization error can be computed.
 	\end{enumerate}
-	The encoded distributions are chosen to be normal so that the encoder can be trained to return the mean and covariance matrix. This makes a way of both local and global regularization of the latent space respectively. Hence,the loss will not be only about the reconstruction of the data in the last layer, called \textit{reconstruction term}, but also how the latent space is organized by making the latent space close to a standard normal distribution, called the \textit{regularization term}. The latter will be calculated by how distant is from the gaussian distribution, using the \textit{Kullback-Leibler divergence}, which is expressed in terms of the means and the covariance matrices of the two distributions.
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=15cm]{imgs/relatedwork/vae}
+		\caption{Autoencoder architecture.}
+		\label{fig:related-vae}
+	\end{figure}
+	The encoded distributions are chosen to be normal so that the encoder can be trained to return the mean and covariance matrix. This makes a way of both local and global regularization of the latent space respectively. Hence,the loss will not be only about the reconstruction of the data in the last layer, called \textit{reconstruction term}, but also how the latent space is organized by making the latent space close to a standard normal distribution, called the \textit{regularization term}. The latter will be calculated by how distant is from the gaussian distribution.
+	KL Divergence, short for Kullback-Leibler Divergence, is a measure of how one probability distribution differs from a second, reference probability distribution. It's commonly used in various fields, including information theory, statistics, and machine learning.
+	Using the \textit{Kullback-Leibler divergence}, which is expressed in terms of the means and the covariance matrices of the two distributions, the variety of outputs are better represented in the latent space in \gls{vae}s than traditional autoencoders:
 	\begin{figure}[H]
 		\begin{align*}
 			\mathcal{L}_{\text{VAE}} &= \text{Reconstruction term} &+&\qquad \text{Regularization term}\\
@@ -531,7 +536,79 @@ The bands can give us a various range of aspects of the orthogonal view. Several
 		\end{align*}
 		\caption{Loss in \gls{vae}}
 	\end{figure}
-	To demonstrate the differences we can compare an autoencoder and a \gls{vae} trained by MNIST data, although it is a really balanced dataset. We can see in  that the range of values in the latent vector of the latter is much smaller and centralized, representing better any class. % TODO: REF!
+	To demonstrate the differences we can compare an autoencoder and a \gls{vae} trained by MNIST data, although it is a really balanced dataset. We can see in  that the range of values in the latent vector of the latter is much smaller and centralized, representing better any class, whereas autoencoder has the images more sparsed in the latent domain. % https://avandekleut.github.io/vae/
+	\begin{figure}[H]
+		\centering
+		\begin{subfigure}[b]{0.49\textwidth}
+			\centering
+			\includegraphics[width=\textwidth]{imgs/relatedwork/ae-latentvector}
+			\caption{Latent vector scatter plot of autoencoder}
+			\label{fig:y equals x}
+		\end{subfigure}
+		\hfill
+		\begin{subfigure}[b]{0.49\textwidth}
+			\centering
+			\includegraphics[width=\textwidth]{imgs/relatedwork/vae-latentvector}
+			\caption{Latent vector scatter plot of \gls{vae}}
+			\label{fig:three sin x}
+		\end{subfigure}
+		\\
+		\begin{subfigure}[b]{0.49\textwidth}
+			\centering
+			\includegraphics[width=\textwidth]{imgs/relatedwork/ae-synth}
+			\caption{Reconstructed digits from autoencoder given latent domain}
+			\label{fig:five over x}
+		\end{subfigure}
+		\hfill
+		\begin{subfigure}[b]{0.46\textwidth}
+			\centering
+			\includegraphics[width=\textwidth]{imgs/relatedwork/vae-synth}
+			\caption{Reconstructed digits from \gls{vae} given latent domain}
+			\label{fig:five over x}
+		\end{subfigure}
+		\caption{Comparison between non-probabilistic autoencoder and \gls{vae}.}
+		\label{fig:three graphs}
+	\end{figure}
+	Moreover, one particularity that makes \gls{vae} architectures good in business and industry related problems or even in processing images\footnote{One problem that \gls{vae}s solve really well is in image reconstruction since it gets the main and reduced idea of an image.} is that they are really fast when sampling due to its bottleneck and the dimensional reduction feature. Nevertheless, the reduction of the bottleneck also makes that the quality of the samples produced by \gls{vae}s are lower than other generative models. In particular, when they are compared to \gls{ddm}s.
+	\\
+	\\
+	\gls{ddm} are a type of generative model that operates through a different framework than \gls{vae}s, although their basis is also probabilistic. While \gls{vae}s focus on encoding data into a latent space and then decoding it to generate reconstructions, \gls{ddm}s revolves around modeling the diffusion process of data. This process involves the gradual transition from a noisy version of the data to the actual clean data. 
+	The process of training a \gls{ddm} involves optimizing the parameters of the diffusion process so that it can effectively recreate the observed data distribution. But, what is this process about? 
+	We can assume that all data comes from a distribution. Basically, any dataset is sampled from the real distribution. The goal of generative models is to learn that distribution so they could sample from it and get another data point that looks like is from the dataset trained. The way that \gls{ddm} learns that distribution is by trying to convert well-known and simple base distribution (like gaussian) to the target data iteratively, with small steps, using a Markov chain, treating the output of the markov chain as the model's approximation for the learned distribution. Hence, the diffusion process can be split into two parts: forward and reverse diffusion processes.
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=11cm]{imgs/relatedwork/forward-diffusion-prob}
+		\caption{Forward diffusion process mapping}
+		\label{fig:related-forward-diffusion-prob}
+	\end{figure}
+	In the forward process $q(x_{t}|x_{t-1})$, the model slowly and iteratively add noise to the images so that they move out from their existing subspace. 
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=11cm]{imgs/relatedwork/forward-diffusion}
+		\caption{Forward diffusion process}
+		\label{fig:related-forward-diffusion}
+	\end{figure}
+	Since it is proved that doing it infinitely the image would eventually end up into a point from a normal distribution $q(x_T|x_0) \thickapprox \mathcal{N}(0,1) $, the final corrupted image would loss all information from original sample. So, what it is aimed is to convert the unknown and complex distribution of the dataset into one that it is easier to sample a point from and understand. The forward process takes the form of a markov chain, where the distribution at a particular time step only depends on the sample of the immediately previous step. Therefore, it is easy to write out the distribution of corrupted samples conditioned on the initial data point $x_0$ as the product of successive single step conditionals:
+	\[q(x_{1:T} | x_0) = \prod_{t=1}^{T} q(x_t|x_{t-1})\]
+	In the case of continuous data, each transition is parameterized as a diagonal gaussian probability distribution function and that is the reason why approximating to $T$ would end up to a gaussian distribution centered at 0, since the parameter $\beta$ will always approach to $1$ and, then, $\sqrt{1 - \beta_T}$ theoretically will approach to 0:
+	\[q(x_{t}|x_{t-1}) = \mathcal{N}(x_t; \sqrt{1 - \beta_t} x_{t-1}, \beta_t I)\]
+	\[ \beta_1 < \beta_2 < ... < \beta_T \quad ; \quad \beta_t \in (0,1) \]
+	Although taking small steps has a cost, learning to undo the steps of the forward process would be less difficult. Adding little noise at each step, there would be less ambiguity about determining the probability density function of the last step in the reverse process.
+	\\	% https://ayandas.me/blog-tut/2021/12/04/diffusion-prob-models.html
+	\\
+	The goal of the reverse process is to undo the forward and to learn the denoising process in order to generate new data from random noise. Unfortunately, infinite paths can be taken starting from the corrupted image but only few of them will turn the noisy image into a data from the desired subspace. Hence, \gls{ddm} takes small iterative steps during the forward diffusion processes and take those steps which the probability distribution function satisfies that the corrupted images differs slightly at each step.
+		\begin{figure}[H]
+		\centering
+		\includegraphics[width=11cm]{imgs/relatedwork/forward-reverse-diffusion}
+		\caption{Forward and diverse diffusion processes}
+		\label{fig:related-forward-reverse-diffusion}
+	\end{figure}
+	Like the forward process, the reverse process is set up as a markov chain, being the pure noise distribution $p(x_T) = \mathcal{N}(x_T; 0, 1)$:
+	\[p_{\theta}(x_{0:T}) = p(x_T) \prod_{t=1}^{T} p_{\theta}(x_{t-1}| x_t)\]
+	\cite{feller1950} shows that theoratically the infinitesimal step sizes of the true reverse process will have the same functional form as the forward process. Therefore, the each learned reverse step will be also a diagonal gaussian distribution:
+	\[p_{\theta}(x_{t-1}|x_t) = \mathcal{N}(x_{t-1}; \mu_{\theta}(x_t; t), \sigma_{\theta}(x_t, t))\]
+	Comparing \gls{ddm}s and VAEs, \gls{ddm}s can capture complex dependencies and distributions in the data due to their inherent modeling of the diffusion process. Estimating and analyzing small step sizes is more tractable than describing a single non-normalizable step from random noise to the learned distributions, which is what \gls{vae} and \gls{gan} do. However, they can be computationally more intensive to train due to the intricacies involved in estimating the diffusion process parameters accurately.
+	
 	\subsubsection{Transformers in computer vision}
 	\gls{cnn} have worked very well for cloud removal, but latest and disruptive state-of-the-art deep learning attention-based architectures \cite{VaswaniSPUJGKP17} uncover new paths to achieve remarkable improvements and results. It has been demonstrated that transformers can excellently overcome challenges such \gls{nlp} \cite{brown2020language}, Text-To-Image Generation \cite{pmlr-v139-ramesh21a}  or Image Completion \cite{pmlr-v119-chen20s} with large datasets, great model size and enough compute.
 	\begin{figure}[H]
