@@ -605,7 +605,7 @@ The bands can give us a various range of aspects of the orthogonal view. Several
 	\end{figure}
 	Like the forward process, the reverse process is set up as a markov chain, being the pure noise distribution $p(x_T) = \mathcal{N}(x_T; 0, 1)$:
 	\[p_{\theta}(x_{0:T}) = p(x_T) \prod_{t=1}^{T} p_{\theta}(x_{t-1}| x_t)\]
-	\cite{feller1950} shows that theoratically the infinitesimal step sizes of the true reverse process will have the same functional form as the forward process. Therefore, the each learned reverse step will be also a diagonal gaussian distribution:
+	\cite{feller1950} shows that theoratically the true reverse process will have the same functional form as the forward process. Therefore, the each learned reverse step will be also a diagonal gaussian distribution:
 	\[p_{\theta}(x_{t-1}|x_t) = \mathcal{N}(x_{t-1}; \mu_{\theta}(x_t; t), \sigma_{\theta}(x_t, t))\]
 	Comparing \gls{ddm}s and VAEs, \gls{ddm}s can capture complex dependencies and distributions in the data due to their inherent modeling of the diffusion process. Estimating and analyzing small step sizes is more tractable than describing a single non-normalizable step from random noise to the learned distributions, which is what \gls{vae} and \gls{gan} do. However, they can be computationally more intensive to train due to the intricacies involved in estimating the diffusion process parameters accurately.
 	
@@ -687,19 +687,22 @@ The bands can give us a various range of aspects of the orthogonal view. Several
 	After reviewing the state-of-the-art proposals and the trend of current deep learning architectures, the objectives regarding model design process that align better in the context of this thesis are the following:
 	\begin{itemize}
 		\item Use \gls{sar} and Sentinel2 data in most of the model architectures since it is the most effective way to remove clouds.
-		\item Train some models without \gls{sar} data and check the difference of it.
-		\item Do not use architectures that need temporal data.
+		\item Train some models without \gls{sar} data and check the difference of it would add an interesting point to the thesis.
 		\item Try at least one of each type of generative models in the following order: \gls{vae}, \gls{gan} and denoising diffusion models.
 		\item Try one \gls{gan} with a \gls{vit} as a discriminator and compare the behavior between other \gls{gan}.
+		\item Do not use architectures that need temporal data since the scope of the thesis would increase twice at least.
 	\end{itemize}
 	\subsection{Academic Datasets}
-	Several public datasets for cloud removal have been proposed over the recent years. In the following section, we will review a few of them and, finally, select those who are more aligned to the thesis and can be merged.
+	Several public datasets for cloud removal have been proposed over the recent years. In the following section, we will review a few of them and, finally, select those who are more aligned to the thesis and that can be merged.
 	\\
 	\\
 	The first public dataset published, called \texttt{RICE}, was described in \cite{rice}. Actually, it can be considered as two datasets, since there are two quite different parts: \texttt{RICE1} and \texttt{RICE2}. While \texttt{RICE1} contains 500 pairs of images\footnote{Each pair contains a cloudy and a cloudless image.} of $512 \times 512$ from Google Earth, \texttt{RICE2} contains 450 sets of images from Landsat 8 OLI/TIRS, being each set three images of $512 \times 512$ px: a cloudless image and a cloudy one with its mask. Compared to the following datasets, the size of both is relatively small and the data of them is spatio-temporal homogeneous. For that reason and since they are not from Sentinel-2, they have been discarded.
 	\\
 	\\
-	\cite{sarukkai2019cloud} introduces two novel datasets contains nearly $10000$ paired Sentinel-2 images of $256 \times 256$ px	drawn from 17800 distinct tiles worldwide. The cloud cover for each cloudy image is between 10\% and 30\%. It excludes the images with insufficient visible ground upon manual inspection and they restrict the percentage of images of ocean being no more than 10 \% of the dataset. The other dataset contains 3130 sets of 3 cloudy images and a cloud-free image of the same region.
+	\cite{sarukkai2019cloud} introduces two novel datasets contains nearly $10000$ paired Sentinel-2 images of $256 \times 256$ px	drawn from 17800 distinct tiles worldwide. The cloud cover for each cloudy image is between 10\% and 30\%. It excludes the images with insufficient visible ground upon manual inspection and they restrict the percentage of images of ocean being no more than 10 \% of the dataset. The other dataset contains 3130 sets of 3 cloudy images and a cloud-free image of the same region. However, only the first could fit the thesis alignment. 
+	\\
+	\\
+	
 	\section{Exploratory Data Analysis}
 	Once selected the datasets, an exploratory data analysis has been carried out to understand the hidden properties between bands from the images and the images themselves to gather enough information and make the dataset comprehensible so that the design and evaluation of deep learning models can be more straight-forward. Moreover, the EDA was aimed to provide insights into potential challenges that might be encountered during the development of the model. This stage of the thesis proposed four main challenges:
 	\begin{itemize}
@@ -711,7 +714,7 @@ The bands can give us a various range of aspects of the orthogonal view. Several
 	During the EDA phase, various techniques were employed to extract meaningful information from the dataset. Descriptive statistics were computed to gain a preliminary understanding of the distribution, central tendency, and spread of the data across different bands. This provided an overview of the range and variability of values within each band, allowing for an initial assessment of their significance.
 	By visually inspecting the images, patterns and trends specific to cloud formations must be discerned, aiding in the development of strategies to tackle cloud removal effectively. Furthermore, feature engineering techniques were explored to derive additional meaningful features from the dataset. This involved transforming, aggregating, or combining existing features to capture important characteristics of the data. After each information was discovered, this steps were not considered to be sequential but concurrent phases to incrementally learn and study the data. Therefore, the following subsections must be interpreted as chapters of a story of the analysis rather than separated and independent subsections.
 	\subsection{Properties extraction and visualization of the first dataset}
-	At first, I started creating a data exploration of \texttt{SEN12MS-CR} \cite{sen12mscr}), since it is the most aligned dataset. Once extracted and analyzed the data, merging it to the other data was thought to be more straight-forward.
+	At first, I started creating a data exploration of \texttt{SEN12MS-CR} \cite{sen12mscr}), since it is the most aligned dataset. Once extracted and analyzed the data, merging it to the other data was thought to be more straight-forward to understand.
 	\\\\
 	The first step to take at this stage was to take care of the pixel intensities in order to visualize and extract the information properly. The imagery values of each band were ranged from $0$ to $10000$. Therefore, the pixels need to be normalized and scaled for a proper processing and visualization of the data. This led to a challenge since I did not want to modify the images to the point that comparison or visualization of the properties extracted would be affected. Three normalization methods were thought:
 	\begin{itemize}
@@ -780,8 +783,7 @@ The bands can give us a various range of aspects of the orthogonal view. Several
 	The app is powered by Streamlit. The library is a powerful and user-friendly python library that simplifies the process of building interactive web applications for data analysis and machine learning. It provides a straightforward way to create custom web interfaces directly from Python scripts, enabling users to easily visualize and explore data, create interactive dashboards, and share their work with others.
 	\\\\
 	Streamlit works by allowing developers to write Python code that defines the various components of the web application, such as widgets, plots, and text. These components are then rendered in a web browser, creating an intuitive and interactive user interface. The library takes care of handling the communication between the Python backend and the frontend, making it seamless for users to interact with the application.
-	\\\\
-	
+	\subsection{Pairing of the second dataset}
 	\subsection{Analysis}
 	\subsection{Conclusions}
 	
