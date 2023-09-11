@@ -1,0 +1,21 @@
+services:
+  model:
+    container_name: precatex_ai
+    image: precatex_inference_1
+    shm_size: '50gb'
+    build: .
+    tty: true
+    command: python -m classification configs/classification/atura.yml
+    # command: python inference.py configs/classification/atura.yml
+    volumes:
+      - /home/oriol.alas@local.eurecat.org/PRECATEX/volumes/frames:/frames/
+      - /home/oriol.alas@local.eurecat.org/PRECATEX/volumes/checkpoints:/checkpoints/
+      - /home/oriol.alas@local.eurecat.org/PRECATEX/volumes/runs:/runs/
+      - /home/oriol.alas@local.eurecat.org/PRECATEX/volumes/input:/input/
+    labels:
+      maintainer: "oriol.alas@eurecat.org"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [ gpu ]
