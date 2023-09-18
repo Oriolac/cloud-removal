@@ -1,22 +1,23 @@
 seed: 42
-gpu: all
+gpu: 0
 data:
   dataset: S1_2_CR_Data
-  root_imgs: /data/docker/volumes/laclasse/SEN12MS-CR/
-  input: /augmented
-  batch_size: 512
-  num_workers: 32
+  root_imgs: /data/
+  input: /inputs/single/
+  batch_size: 12
+  num_workers: 24
 train:
   model:
-    name: DSen2-CR
+    name: Residual-CNN
     kwargs:
       input_channels: 15
       output_channels: 13
+      hidden_channels: [64, 128, 256]
   start_epoch: 1
   epochs: 2000
   checkpoint:
-    path:
-    model:
+    path: models/
+    model: Residual-CNN
   criterion: MSELoss
   optimizer:
     name: Adam

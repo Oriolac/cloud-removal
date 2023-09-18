@@ -1,0 +1,10 @@
+version: '3'
+services:
+  laclasse-multitemporal-pairing:
+    image: laclasse-extraction:latest
+    container_name: laclasse-multitemporal-pairing-container
+    build: .
+    command: ["python", "main.py"]
+    volumes:
+      - /home/oriol.alas@local.eurecat.org/TFM/projects/pairing_cr_ts/:/app/
+      - /data/docker/volumes/laclasse/SEN12MS-CR/:/data/

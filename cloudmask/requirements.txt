@@ -1,0 +1,5 @@
+numpy
+pandas
+s2cloudless
+rasterio
+Pillow

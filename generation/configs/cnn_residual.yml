@@ -1,11 +1,11 @@
 seed: 42
-gpu: all
+gpu: 0
 data:
   dataset: S1_2_CR_Data
   root_imgs: /data/
   input: /inputs/single/
-  batch_size: 64
-  num_workers: 32
+  batch_size: 12
+  num_workers: 24
 train:
   model:
     name: Residual-CNN
@@ -13,6 +13,7 @@ train:
       input_channels: 15
       output_channels: 13
       hidden_channels: [64, 128, 256]
+      split_size: 12
   start_epoch: 1
   epochs: 2000
   checkpoint:

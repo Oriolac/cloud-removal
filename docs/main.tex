@@ -155,6 +155,7 @@
 \newacronym{ltae}{L-TAE}{Lightweight Temporal Attention Encoder}
 \newacronym{tae}{TAE}{Temporal Attention Encoder}
 \newacronym{vae}{VAE}{Variational AutoEncoder}
+\newacronym{bce}{BCE}{Binary Cross Entropy}
 \newacronym{ddm}{DDM}{Denoising Diffusion Model}
 \newacronym{elbo}{ELBO}{Evidence Lower Bound}
 \newacronym{kl}{KL}{Kullback-Leibler}
@@ -162,6 +163,9 @@
 \newacronym{mse}{MSE}{Mean Squared Error}
 \newacronym{mae}{MAE}{Mean Absolute Error}
 \newacronym{carl}{CARL}{Cloud-Adaptive Regularized Loss}
+\newacronym{eda}{EDA}{Exploratory Data Analysis}
+\newacronym{kde}{KDE}{Kernel Density Estimation}
+\newacronym{relu}{ReLU}{Rectified Lineal Unit}
 
 \def\contentsname{Índex}
 \begin{document}
@@ -240,20 +244,50 @@
 	\pagenumbering{arabic}
 
 	\part{Introduction} 
-	\gls{rs} imagery is critical to perform challenges such climate change or natural resources management, including zone monitoring for reforestation, disaster mapping, land surface change detection and coastal water quality monitoring.  % canvi de terrenys, natural resources management, climate change, zone monitoring for reforestation, climate change, disaster mitigation 
-	Nevertheless, on average 55\% of the Earth's land surfaces is covered by clouds, being then a significant impediment to carry out a broad range of applications. Satellite imagery plagued by films of clouds that obstructs the scene implies a great loss of information or causing effects such as blurring, which mitigates the power of \gls{rs}. Hence, \gls{rs} applications definitely needs a generic technique to detect and remove the cloudy region with an in-painting of the underlying scene.
+	\gls{rs} imagery is critical to overcome challenges such climate change or natural resources management, including zone monitoring for reforestation, disaster mapping, evolution, and impact assessment, land surface change detection and coastal water quality monitoring.  
+	Nevertheless, on average 55\% of the Earth's land surfaces is covered by clouds, being then a significant impediment to carry out a broad range of applications. Satellite imagery plagued by films of clouds that obstructs the scene implies a great loss of information or causing effects such as blurring, which mitigates the power of \gls{rs}. Hence, \gls{rs} applications would be greatly improved with techniques aimed at detecting and removing cloudy regions, and proving in-painting capabilities for the underlying scene, thus allowing for better analytics and decision support.
 	\\
 	\\
-	Once set the problem, the goals of this master thesis have been:
+	On the other hand, my interest in deep learning and computer vision has truly flourished over the past two years. During my initial project in computer vision focused on satellite images, I suffered hard times because of cloud coverage. Regrettably, many ideas couldn't be realized without access to a dependable weekly record that would meet the end user's reliability requirements. This experience has piqued my curiosity for tackling new challenges and, most importantly, learning from them to pave the way for future endeavors. 
+	\\
+	\\
+	Furthermore, deep learning has, in recent years, unveiled opportunities that were entirely unimaginable just a decade or two ago. Its immense potential, especially in generative models, holds the promise of substantial societal and environmental advancements. However, grasping the intricacies of these models and determining when to employ one over the other can prove rather challenging without a dedicated period of learning and experimentation. 
+	\\
+	\\
+	In this ever evolving landscape, the intersection of \gls{rs} and deep learning holds the promise of advancing our understanding of the world and our ability to tackle complex global issues. So why not embark on this journey?
+	\newpage
+	\section*{Objectives}
+	Once set the challenge and the motivation, the goals of this master thesis are:
 	\begin{itemize}
-		\item Search state-of-the-art solutions as well as frameworks that could bring new improvements and better results.
+		\item Search state-of-the-art approaches as well as frameworks that could bring new improvements and better results.
 		\item Create or search for a multi-temporal and spatial imagery to design and evaluate a model that can remove the clouds given a satellite image.
 		\item Design and implement an effective model and monitoring its training.
-		\item Evaluate the model and make a comparison with the other solutions proposed.
+		\item Evaluate the model and provide a benchmark with other approaches.
 	\end{itemize}
-
+	\newpage
+	\section*{Task planification}
+	Creating a project plan and establishing timelines for each task are essential steps in effectively managing your deep learning project. To ensure efficient project management and maintain a consistent work pace, the project has been broken down into three main tasks, each further subdivided into smaller components. These tasks include:
+	\begin{itemize}
+	\item \textbf{Study of the problem and review of the State of the Art}. This task involves conducting a comprehensive analysis of the problem the project aims to solve. It not only includes a detailed examination of existing research and methodologies relevant to the problem but also comprehends the technical requirements to do the following tasks.
+	\item \textbf{Data exploration}. Data exploration entails the thorough investigation of the dataset or datasets to be used in the project. This process includes data collection, cleaning, preprocessing, and augmentation as necessary. The goal is to understand the data's characteristics
+	\item \textbf{Training and generation of sample results}. The training and generation of sample results constitute the practical implementation phase of the project. This step also involves hyperparameter tuning and iterative model improvements. Ultimately, the goal is to generate sample results that demonstrate the model's ability to remove clouds from satellite images, showcasing the effectiveness of the developed algorithms.
+	\end{itemize}
+	\begin{figure}[H]
+		\caption{Project timeline}
+		\centering
+			\begin{adjustwidth}{-2cm}{}
+		\includegraphics[width=18cm]{imgs/gantt.png}
+		\end{adjustwidth}
+	\end{figure}
 	\newpage
 	\section{Problem Analysis}
+	\gls{rs} is a scientific method used to obtain information about objects or areas from a distance, typically from aircraft or satellites. This technique involves detecting and measuring the radiation that is emitted or reflected by these objects or areas. Remote sensing is widely used in various fields such as meteorology, agriculture, geology, and environmental science, among others.
+	\\
+	\\
+	Traditional ground-based data collection methods can be resource-intensive, requiring transportation, equipment, and personnel. In this way, \gls{rnn} minimizes the need for these, conserving resources. Satellite-based observations reduce the need for on-ground surveys, which can involve vehicles and equipment that emit greenhouse gases. When cloud interference is removed, satellite imagery provides a more comprehensive view of large areas, ensuring that no critical changes or patterns are missed. Moreover, the timely access to clear images can be crucial for monitoring and responding to environmental changes or disasters.
+	\\
+	\\
+	Although there are several constellations and a high diversity of aerial and satellite images, the problem has been focused using Copernicus Sentinel2 constellation. The reason why is simple, Sentinel constellation imagery is freely available to the public, making it accessible for researchers, scientists, and organizations around the world. Definitely, open data policy encourages innovation and the development of a wide range of applications.
 	\subfile{sections/soa}
 	\newpage
 	\part{Development}
@@ -263,19 +297,47 @@
 	\subfile{sections/datamerge}
 	\newpage
 	\section{Model training}
+	\subsection{Technologies}
+	\subfile{sections/stack}
 	\subsection{Losses and metrics}
 	\subfile{sections/metrics}
 	\subsection{Models architecture}
-	Regarding the models, we can classify each model trained by its main idea behind their design. Inspired by \cite{Meraner2020} and due to its simplicity compared to other architectures, residual \gls{cnn}s. It was more straightforward to find a correct composition since they are not based in adversarial training or direct statistical losses. 
-	% SIGMOID
-	\subsection{Model comparison}
-	% MLFLOw
-	% DataParallel
-	% ModelParallel
-	\newpage
-	\section{Experiments \& results}
+	\subfile{sections/models}
+	\section{Experiments and results}
+	\subfile{sections/results}
+	\section*{Economic Analysis}
+	While the project primarily centers around research, it's essential to consider that applied research incurs costs. Consequently, a basic economic analysis has been carried out to assess the expenses incurred thus far.\\
+	\\
+	In the economic analysis, we assumed that an individual with a master's degree would cost the company approximately 70€/h. Given that the work was conducted on a part-time basis, a total of 430 hours were spent, equating to 30100€. 
+	On the other hand, the GPU was used for a total of 182 hours. Given that the average price is around €2 \cite{price-gpu} per hour, €364 was spent in total. Considering that machine learning or deep learning projects typically cost between 60000€ to 100000€, the project remains profitable. However, since there is job to be done the required time for the project would decrease its profitability. Assuming it will be needed one entire month more, the expenditure could amount to a total of €42,140.
+	\begin{table}[H]
+		\centering
+		\caption{Cost of the project}
+		\begin{tabular}{c|ccc}
+		 & Value & Conversion & Total (\euro) \\\hline
+		PM	& 2.5 PM & $70 \frac{\text{\euro}}{h}$ & $30100 €$ \\
+		GPU	& 182 hours & $2 \frac{\text{\euro}}{h}$ & $364 €$ \\\hline
+		Total & & & $30464 €$\\\hline\hline
+		Predicted PM & 2.5 PM & $70 \frac{\text{\euro}}{h}$ & $12040 €$\\\hline
+		Total & & & $42140 €$\\	
+		\end{tabular}
+	\end{table}
+	
+	%
+	
 	\newpage
 	\part{Conclusions}
+	In summary, the introduction and results suggest that while RS imagery and deep learning hold great promise, there is a need for more powerful neural networks, improved data normalization, and consideration of alternative approaches to overcome cloud coverage challenges.
+	\\
+	\\
+	The project aimed to search for and analyze state-of-the-art approaches and frameworks in the field of remote sensing and deep learning. This exploration was intended to identify novel methods that could lead to improvements and superior results in cloud removal from satellite imagery.
+	\\
+	\\
+	Technically, the project's cautious approach of using less powerful neural networks for methodical development has led to delays. There is a clear need to reconsider this approach and explore more potent neural network models to expedite progress. Some challenges were exacerbated by issues with data normalization. Recognizing these issues at a later stage hindered model learning and contributed to setbacks. Addressing normalization problems is crucial for better results. The project found that diffusion models were more time-consuming than initially suspected. This highlights the importance of careful consideration and optimization in the implementation of such models to make them computationally efficient.
+	\\
+	\\
+	Professionally, I must admit that the Master's thesis has provided me with extensive knowledge about generative images. However, there is still a considerable distance to cover before I can feel entirely at ease with this type of problem-solving and approach it with greater ease. On the positive side, I now feel more capable and prepared to rigorously adhere to project timelines, even if it requires prioritizing certain aspects over others. This experience has taught me the importance of identifying what truly matters and having the ability to emphasize or de-emphasize elements based on their relevance to the project's ultimate goals. In essence, this project has been a valuable learning experience, helping me establish effective boundaries when working on complex tasks.
+	
 	\newpage
 	\bibliography{bibliography}
 	\bibliographystyle{unsrt}

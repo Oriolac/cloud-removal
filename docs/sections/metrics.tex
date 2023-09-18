@@ -14,7 +14,7 @@ The \gls{sam} is a widely used algorithm for comparing spectral similarity betwe
 
 A loss or metric used only in cloud removal state of the art is the \gls{carl}. It is a custom loss function, typically used when there is the cloud mask. This loss function is constructed to handle areas in satellite images that are clear or cloudy differently. This metric focuses on minimizing the differences between the clear regions of the input image and the synthetic image. For that reason, for clear regions, it is used the \gls{mae} between the output and the input image, and, for cloudy images, it is used the \gls{mae} between the output and the target image. Additionally, there's a penalty term added to the loss which is simply the mean absolute error between the predicted values and the true target values, weighted by a factor. Normally, $w = 1$.
 \begin{align*}
-CARL(x, y, \hat{y}, mask_{cloud}) =& \quad  \frac{\sum_{i=1}^{n} (A - mask_{cloud}) \times |(x_i - \hat{y_i})|}{n} \, + \\  & \quad + \frac{\sum_{i=1}^{n} mask_{cloud} \times |(y_i - \hat{y_i})|}{n} \, + \\ & \quad + w \cdot \frac{\sum_{i=1}^{n} |y_i - \hat{y_i}| }{n}
+	CARL(x, y, \hat{y}, mask_{cloud}) =& \quad  \frac{\sum_{i=1}^{n} (A - mask_{cloud}) \times |(x_i - \hat{y_i})|}{n} \, + \\  & \quad + \frac{\sum_{i=1}^{n} mask_{cloud} \times |(y_i - \hat{y_i})|}{n} \, + \\ & \quad + w \cdot \frac{\sum_{i=1}^{n} |y_i - \hat{y_i}| }{n}
 \end{align*}
 \[\text{being} \quad A = 
 \begin{pmatrix}
@@ -30,6 +30,11 @@ In essence, the \gls{carl} loss aims to:
 	\item Penalize large differences in cloudy or shadowed areas between predictions and true values.
 	\item Apply an overall penalty for differences between predictions and true values across the entire image.
 \end{itemize}
+Normally, no classifications loss functions would be used in generative models. Although, since \gls{gan}s, more specifically, discriminators, need to discern between real and fake images, it is notable to mention the \gls{bce} loss, whcih, actually, is regularly used in binary classification. A grosso modo \gls{bce} calculates the dissimilarity between the true distribution of labels and the predicted probability distribution. In other words, it doesn't just look at the raw value of the prediction but considers it as a probability distribution. 
+\[BCE(x, y) = -(y \cdot log(x) + (1 - y) \cdot log (1 - x))\]
+A lower \gls{bce} indicates that the predicted probabilities are closer to the true labels, while a higher \gls{bce} suggests a larger discrepancy. Since it is measuring probabilities, it is compulsary to output a value between 0 and 1. 
+\\
+\\
 When referring to image processing and computer vision, there are metrics to measure the similarity between two images. The \gls{psnr} is a metric commonly used to measure the quality of reconstructed or compressed images in comparison to a reference image. It is particularly popular in the fields of image and video compression, as it gives an objective measure of the reconstruction quality. The \gls{psnr} is derived from the \gls{mse} between the reference and the reconstructed image.
 \[PSNR(y, \hat{y}) = 10 \cdot log_{10} \frac{(MAX_I^2)}{MSE(y, \hat{y})}\]
 where $MAX_I$ is the maximum possible pixel value of the image, in our case, 1. The PSNR is usually expressed in decibels (dB). A higher PSNR indicates better reconstruction quality, implying that the reconstructed image is closer to the reference image. Conversely, a lower PSNR suggests that the image quality has deteriorated. It's worth noting that while PSNR is a straightforward and widely-used metric, it doesn't always align perfectly with human perception. In some cases, images with higher PSNR may appear of lower quality to human viewers, and vice-versa. 

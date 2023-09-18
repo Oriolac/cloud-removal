@@ -1,6 +1,12 @@
 data/**
 **.pkl
 eda/notebooks/data/cr/**
+**/dsen2-cr/**
+./dsen2-cr/**
+**/mlruns/**
+**/old_runs/**
+**/newruns/**
+
 
 # Created by https://www.toptal.com/developers/gitignore/api/pycharm,visualstudiocode,python,tex
 # Edit at https://www.toptal.com/developers/gitignore?templates=pycharm,visualstudiocode,python,tex

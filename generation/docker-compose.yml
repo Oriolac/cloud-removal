@@ -1,17 +1,20 @@
 services:
-  model:
-    container_name: precatex_ai
-    image: precatex_inference_1
+  laclasse-inference-inference:
+    container_name: laclasse-inference-container
+    image: laclasse-inference:latest
     shm_size: '50gb'
     build: .
     tty: true
-    command: python -m classification configs/classification/atura.yml
-    # command: python inference.py configs/classification/atura.yml
+    stdin_open: true # docker run -i // removing it has no effect
+    #command: python main.py cnn configs/carla.yml
+    command: python inference.py 6362419456364c2588fafd304b898136 residual /output/residual/ 1
+    #command: python inference.py 4b46262d713346298f63112c55ce596a Regina /output/regina/ 1
     volumes:
-      - /home/oriol.alas@local.eurecat.org/PRECATEX/volumes/frames:/frames/
-      - /home/oriol.alas@local.eurecat.org/PRECATEX/volumes/checkpoints:/checkpoints/
-      - /home/oriol.alas@local.eurecat.org/PRECATEX/volumes/runs:/runs/
-      - /home/oriol.alas@local.eurecat.org/PRECATEX/volumes/input:/input/
+      - /home/oriol.alas@local.eurecat.org/TFM/projects/generation_cnn3/configs:/app/configs
+      - /data/docker/volumes/laclasse/SEN12MS-CR/:/data/
+      - /data/docker/volumes/laclasse/runs/:/runs/
+      - /data/docker/volumes/laclasse/inputs/:/inputs/
+      - /data/docker/volumes/laclasse/output/:/output/
     labels:
       maintainer: "oriol.alas@eurecat.org"
     deploy:

@@ -1,39 +1,32 @@
-import yaml
 from typing import Any, Dict
+
+from data.config import Data, Model, Checkpoint, Optimizer
+
+
+class Train:
+    def __init__(self, model: Model, start_epoch: int, epochs: int, checkpoint: Checkpoint, criterion: str,
+                 optimizer: Optimizer):
+        self.model: Model = model
+        self.start_epoch = start_epoch
+        self.epochs = epochs
+        self.checkpoint: Checkpoint = checkpoint
+        self.criterion = criterion
+        self.optimizer: Optimizer = optimizer
 
 
 class Config:
-    """Base class for configuration."""
-
-    def __init__(self, **entries: Dict[str, Any]):
-        self.__dict__.update(entries)
-
-
-def generate_class_from_dict(d: Dict[str, Any], class_name: str) -> Config:
-    """Generate a class dynamically from a dictionary."""
-    new_class = Config(**d)
-    for k, v in d.items():
-        if isinstance(v, dict) and k != "kwargs":
-            setattr(new_class, k, generate_class_from_dict(v, k.capitalize()))
-    return new_class
-
-if __name__ == '__main__':
-    # Read the YAML and generate classes
-    with open('configs/config_cnn.yml', 'r') as file:
-        yaml_content = yaml.safe_load(file)
-
-    config = generate_class_from_dict(yaml_content, "Config")
-
-    # Function to pretty print the class attributes
-    def pretty_print(obj: Config, indent: int = 0):
-        print(obj)
-        for attr, value in obj.__dict__.items():
-            if isinstance(value, Config):
-                print("  " * indent + f"{attr}:")
-                pretty_print(value, indent + 1)
-            else:
-                print("  " * indent + f"{attr}: {value}")
+    def __init__(self, seed: int, gpu: Any, data: Data, train: Train):
+        self.seed = seed
+        self.gpu = gpu
+        self.data: Data = data
+        self.train: Train = train
 
 
-    # Pretty print the generated classes
-    pretty_print(config)
+def populate_classes(yaml_dict: Dict[str, Any]) -> Config:
+    optimizer = Optimizer(**yaml_dict['train']['optimizer'])
+    checkpoint = Checkpoint(**yaml_dict['train']['checkpoint'])
+    model = Model(**yaml_dict['train']['model'])
+    train = Train(model=model, checkpoint=checkpoint, optimizer=optimizer,
+                  **{k: v for k, v in yaml_dict['train'].items() if k not in ['model', 'checkpoint', 'optimizer']})
+    data = Data(**yaml_dict['data'])
+    return Config(data=data, train=train, **{k: v for k, v in yaml_dict.items() if k not in ['data', 'train']})

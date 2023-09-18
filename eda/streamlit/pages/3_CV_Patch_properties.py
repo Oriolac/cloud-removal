@@ -50,7 +50,7 @@ DFS = {
 @st.cache_data
 def property_body(df, y, hue):
     if hue != "":
-        grouped_df = df.groupby(by=hue).mean().reset_index()
+        grouped_df = df[[y, hue]].groupby(by=hue).mean().reset_index()
         fig = px.bar(grouped_df, x=hue, y=y)
         st.write(fig)
     if hue != "":

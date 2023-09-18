@@ -1,5 +1,5 @@
 seed: 42
-gpu: 0
+gpu: 1
 data:
   dataset: S1_2_CR_Data
   root_imgs: /data/
@@ -8,16 +8,15 @@ data:
   num_workers: 24
 train:
   model:
-    name: Anna
+    name: Ausias
     kwargs:
       input_channel: 15
       output_channel: 13
-      hidden_channels: [64, 128, 256]
   start_epoch: 1
   epochs: 2000
   checkpoint:
     path: models/
-    model: Anna
+    model: Ausias
   criterion: MSELoss
   optimizer:
     name: Adam

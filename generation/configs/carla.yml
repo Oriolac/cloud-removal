@@ -1,0 +1,28 @@
+seed: 42
+gpu: 1
+data:
+  dataset: S1_2_CR_Data
+  root_imgs: /data/
+  input: /inputs/single/
+  batch_size: 24
+  num_workers: 24
+train:
+  model:
+    name: Carla
+    kwargs:
+      input: 15
+      chan1: 64
+      chan2: 128
+      chan3: 256
+  start_epoch: 1
+  epochs: 2000
+  checkpoint:
+    path: models/
+    model: Carla
+  criterion: MSELoss
+  optimizer:
+    name: Adam
+    kwargs:
+      lr: 0.00001
+      weight_decay: 0.00005
+      betas: [0.9, 0.999]

@@ -8,7 +8,7 @@ data:
   num_workers: 24
 train:
   model:
-    name: Ausias
+    name: AusiasConv
     kwargs:
       input_channel: 15
       output_channel: 13
@@ -16,7 +16,7 @@ train:
   epochs: 2000
   checkpoint:
     path: models/
-    model: Ausias
+    model: AusiasConv
   criterion: MSELoss
   optimizer:
     name: Adam

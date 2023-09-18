@@ -2,18 +2,61 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="50bb0ed6-1006-4960-963c-bba84e452d98" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/eda/indices.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eda/.idea/eda.iml" beforeDir="false" afterPath="$PROJECT_DIR$/eda/.idea/eda.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eda/__main__.py" beforeDir="false" afterPath="$PROJECT_DIR$/eda/__main__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eda/cloud.py" beforeDir="false" afterPath="$PROJECT_DIR$/eda/cloud.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eda/io.py" beforeDir="false" afterPath="$PROJECT_DIR$/eda/io.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eda/process.py" beforeDir="false" afterPath="$PROJECT_DIR$/eda/process.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../generation/configs/ausiasbatch_l1.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../generation/gan/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../generation/gan/config.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../generation/gan/main.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../generation/gan/models/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../cloudmask/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/../cloudmask/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../cloudmask/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../cloudmask/docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../cloudmask/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../cloudmask/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../docs/imgs/models/metrics/approach.png" beforeDir="false" afterPath="$PROJECT_DIR$/../docs/imgs/models/metrics/approach.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../docs/main.ist" beforeDir="false" afterPath="$PROJECT_DIR$/../docs/main.ist" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../docs/main.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/../docs/main.pdf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/notebooks/00-Exploration.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/notebooks/00-Exploration.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/notebooks/01-HiddenObjects.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/notebooks/01-HiddenObjects.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/notebooks/03-BlurScore.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/notebooks/03-BlurScore.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/notebooks/06-Props.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/notebooks/06-Props.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/streamlit/pages/1_Clouds.py" beforeDir="false" afterPath="$PROJECT_DIR$/streamlit/pages/1_Clouds.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../extraction/src/__main__.py" beforeDir="false" afterPath="$PROJECT_DIR$/../extraction/src/__main__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/notebooks/10-CSV-Join.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/notebooks/10-CSV-Join.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/notebooks/B01-FindPairs copy.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/notebooks/B01-FindPairs copy.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/streamlit/data/train_val_test_patches.csv" beforeDir="false" afterPath="$PROJECT_DIR$/streamlit/data/train_val_test_patches.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/streamlit/pages/2_CV_Band_properties.py" beforeDir="false" afterPath="$PROJECT_DIR$/streamlit/pages/2_CV_Band_properties.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/streamlit/pages/2_Distribution_Band_properties.py" beforeDir="false" afterPath="$PROJECT_DIR$/streamlit/pages/2_Distribution_Band_properties.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/streamlit/pages/3_CV_Patch_properties.py" beforeDir="false" afterPath="$PROJECT_DIR$/streamlit/pages/3_CV_Patch_properties.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../generation/.idea/generation.iml" beforeDir="false" afterPath="$PROJECT_DIR$/../generation/.idea/generation.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../generation/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../generation/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../generation/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/../generation/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../generation/ae/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/../generation/ae/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../generation/ae/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/../generation/ae/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../generation/ae/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/../generation/ae/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../generation/ae/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/../generation/ae/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../generation/cnn/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/../generation/cnn/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../generation/cnn/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/../generation/cnn/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../generation/cnn/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/../generation/cnn/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../generation/cnn/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/../generation/cnn/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../generation/configs/annaskip.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../generation/configs/annaskip.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../generation/configs/ausias.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../generation/configs/ausias.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../generation/configs/ausias_conv.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../generation/configs/ausias_conv.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../generation/configs/ausias_l1.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../generation/configs/ausias_l1.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../generation/configs/cnn_residual.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../generation/configs/cnn_residual.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../generation/configs/cnn_residual_augmented.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../generation/configs/cnn_residual_augmented.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../generation/configs/cnn_residual_nosar.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../generation/configs/cnn_residual_nosar.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../generation/configs/cnn_sar.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../generation/configs/cnn_sar.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../generation/data/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/../generation/data/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../generation/data/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/../generation/data/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../generation/data/datasets.py" beforeDir="false" afterPath="$PROJECT_DIR$/../generation/data/datasets.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../generation/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../generation/docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../generation/hyper/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/../generation/hyper/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../generation/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/../generation/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../generation/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/../generation/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../generation/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/../generation/utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../generation/vae/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/../generation/vae/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../generation/vae/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/../generation/vae/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../pairing_ts/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/../pairing_ts/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../pairing_ts/docker-compose.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../pairing_ts/docker-compose.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../runs/Loss_disc/events.out.tfevents.1655388973.ori-lap.42693.2" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../runs/Loss_gen/events.out.tfevents.1655388973.ori-lap.42693.1" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../runs/Scores_fake/events.out.tfevents.1655388973.ori-lap.42693.4" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../runs/Scores_real/events.out.tfevents.1655388973.ori-lap.42693.3" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../runs/events.out.tfevents.1655388459.ori-lap.42693.0" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

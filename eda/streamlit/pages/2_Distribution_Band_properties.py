@@ -96,7 +96,7 @@ def get_filter(df, select_bands, selected_property, hue):
     ]
     df = df[df.measure == PROPERTIES_DICT[selected_property]]
     df = df[df.band.apply(lambda x: str(x) in select_bands)]
-    df = df.groupby(by=['band', hue]).mean().reset_index()
+    df = df[[hue, 'band', 'value']].groupby(by=['band', hue]).mean().reset_index()
     df.sort_values(by='band')
     fig, ax = plt.subplots(1, 1)
     ax.set_title(selected_property)
@@ -113,7 +113,7 @@ def to_kind_hist(df, bands, hue, width=0.3, spacing=0.3 ):
     for i_band, band in enumerate(bands):
         band = int(band)
         df_band = df[df.band == band]
-        df_band = df_band.groupby(by=['measure', hue]).mean()[['value']]
+        df_band = df_band[['measure', hue, 'value']].groupby(by=['measure', hue]).mean()[['value']]
         ax.grid(zorder=-1)
         x_start = width * 2 + i_band * spacing + len(BASIC_ATTR_DICT[hue]) * i_band * width
         rects = []

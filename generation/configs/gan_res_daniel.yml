@@ -1,0 +1,52 @@
+seed: 42
+gpu: 1
+data:
+  dataset: S1_2_CR_Data
+  root_imgs: /data/
+  input: /inputs/single/
+  batch_size: 1
+  num_workers: 24
+train:
+  generator:
+    name: Residual-CNN
+    kwargs:
+      input_channels: 15
+      output_channels: 13
+      hidden_channels: [64, 128, 256]
+  discriminator:
+    name: Daniel
+    kwargs:
+      input_channel: 13
+      hidden_channels:
+        - 64
+        - 128
+        - 256
+        - 512
+      relu: 0.3
+  start_epoch: 1
+  epochs: 2000
+  checkpoint:
+    path: models/
+    model: ResDidac
+  criterion_generator: BCELoss
+  optimizer_generator:
+    name: Adam
+    kwargs:
+      lr: 0.00001
+      weight_decay: 0.00005
+      betas: [0.5, 0.999]
+  criterion_discriminator: BCELoss
+  optimizer_discriminator:
+    name: Adam
+    kwargs:
+      lr: 0.00000001
+      weight_decay: 0.0001
+      betas: [ 0.5, 0.999 ]
+  metrics:
+    SSIM:
+      channel: 13
+      data_range: 1
+    MSELoss: {}
+    PSNR:
+      range: 1
+  strategies: {}

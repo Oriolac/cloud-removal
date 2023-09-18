@@ -78,11 +78,11 @@ def band_analysis(df):
 
 
 def get_filter(df, selected_property, container, hue):
-    df = df.groupby(by=['band', hue]).mean().reset_index()
+    df = df[['band', hue, 'value']].groupby(by=['band', hue]).mean().reset_index()
     df.sort_values(by='band')
     fig, ax = plt.subplots(1, 1)
     ax.set_title(selected_property + " by mean")
-    sns.barplot(df, x='band', y='value', hue=hue, ax=ax)
+    sns.barplot(df, x='band', y='value', hue=hue, ax=ax, palette={"cloudless": "tab:orange", "cloudy": "tab:blue"})
     container.write(fig)
 
 

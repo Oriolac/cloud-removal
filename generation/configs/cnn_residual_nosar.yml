@@ -1,5 +1,5 @@
 seed: 42
-gpu: 1
+gpu: 0
 data:
   dataset: S2_CR_Data
   root_imgs: /data/
@@ -10,7 +10,7 @@ train:
   model:
     name: Residual-CNN
     kwargs:
-      input_channels: 15
+      input_channels: 13
       output_channels: 13
       hidden_channels: [64, 128, 256]
       split_size: 12

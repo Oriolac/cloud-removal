@@ -1,1 +1,10 @@
 mlflow
+pytorch-lightning
+pyyaml
+torchvision
+pandas
+numpy
+rasterio
+scikit-image
+pytorch-msssim
+diffusers

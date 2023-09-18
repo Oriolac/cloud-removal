@@ -20,6 +20,6 @@ WORKDIR /app
 
 RUN pip install -r requirements.txt
 
-COPY eda /app/eda
+COPY . /app/
 
 

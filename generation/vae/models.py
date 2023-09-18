@@ -1,75 +1,110 @@
-import logging
-
-import numpy as np
 import torch
 from torch import nn
 
-from cnn.config import Model, Train, Checkpoint
+from cnn.config import Train
+from cnn.models import ResidualBlock
 from utils import weights_init
 
 
-class ResnetStackedArchitecture(nn.Module):
-
-    def __init__(self, input_channels, output_channels):
-        super(ResnetStackedArchitecture, self).__init__()
-        self.F = 256
-        self.B = 16
-        self.kernel_size = 3
-        self.padding_size = 1
-        self.scale_res = 0.1
-        self.dropout = False
-        self.input_channels = input_channels
-        self.output_channels = output_channels
-        self.channels_distance = self.input_channels - self.output_channels
-
-        model = [
-            nn.Conv2d(self.input_channels, self.F, kernel_size=self.kernel_size, padding=self.padding_size, bias=True),
-            nn.ReLU(True)]
-        # generate a given number of blocks
-        for i in range(self.B):
-            model += [ResnetBlock(self.F, use_dropout=self.dropout, use_bias=True,
-                                  res_scale=self.scale_res, padding_size=self.padding_size)]
-
-        model += [
-            nn.Conv2d(self.F, self.output_channels, kernel_size=self.kernel_size, padding=self.padding_size, bias=True)]
-
-        self.model = nn.Sequential(*model)
-
-    def forward(self, input):
-        # long-skip connection: add cloudy MS input (excluding the trailing two SAR channels) and model output
-        return input[:, self.channels_distance:, ...] + self.model(input)
+def reparameterize(mu, log_var):
+    std = torch.exp(0.5 * log_var)
+    eps = torch.randn_like(std)
+    return mu + eps * std
 
 
-# Define a resnet block
-class ResnetBlock(nn.Module):
-    def __init__(self, dim, use_dropout, use_bias, res_scale=0.1, padding_size=1):
-        super(ResnetBlock, self).__init__()
-        self.res_scale = res_scale
-        self.padding_size = padding_size
-        self.conv_block = self.build_conv_block(dim, use_dropout, use_bias)
+class Print(nn.Module):
 
-        # conv_block:
-        #   CONV (pad, conv, norm),
-        #   RELU (relu, dropout),
-        #   CONV (pad, conv, norm)
-
-    def build_conv_block(self, dim, use_dropout, use_bias):
-        conv_block = []
-
-        conv_block += [nn.Conv2d(dim, dim, kernel_size=3, padding=self.padding_size, bias=use_bias)]
-        conv_block += [nn.ReLU(True)]
-
-        if use_dropout:
-            conv_block += [nn.Dropout(0.2)]
-
-        conv_block += [nn.Conv2d(dim, dim, kernel_size=3, padding=self.padding_size, bias=use_bias)]
-
-        return nn.Sequential(*conv_block)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
     def forward(self, x):
-        # add residual mapping
-        out = x + self.res_scale * self.conv_block(x)
-        return out
+        print(x.shape)
+        return x
+
+class Vanessa(nn.Module):
+    def __init__(self, input_channel, hidden_channels, output_channel, latent_dim):
+        super(Vanessa, self).__init__()
+        self.input_channel = input_channel
+        self.hidden_channels = hidden_channels
+        self.output_channel = output_channel
+        last_channel = input_channel
+        for hidden_channel in hidden_channels:
+            setattr(self, "convblock_{}_{}".format(last_channel, hidden_channel),
+                    self.conv_block(last_channel, hidden_channel))
+            last_channel = hidden_channel
+
+        self.lineal = nn.Sequential(nn.AdaptiveAvgPool2d(1),
+                                    nn.Flatten(),
+                                    nn.Linear(last_channel,
+                                              latent_dim * 2))
+        self.deslineal = nn.Sequential(
+            nn.Linear(latent_dim, 1024 * 8 * 8))
+        self.upsample = nn.Sequential(
+            nn.Upsample(scale_factor=2),
+            nn.Conv2d(1024, 1024, (3,3), padding=1),
+            nn.BatchNorm2d(1024),
+            nn.Upsample(scale_factor=2),
+            nn.Conv2d(1024, 1024, (3, 3), padding=1),
+            nn.BatchNorm2d(1024),
+        )
+
+        for hidden_channel in reversed(hidden_channels[:-1]):
+            setattr(self, "deconvblock_{}_{}".format(last_channel, hidden_channel),
+                    self.deconv_block(last_channel, hidden_channel))
+            last_channel = hidden_channel
+        setattr(self, "deconvblock_{}".format(output_channel),
+                self.deconv_block(last_channel, output_channel))
+        self.final = nn.Sigmoid()
+
+    def conv_block(self, in_channels, out_channels):
+        return nn.Sequential(
+            nn.Conv2d(in_channels, out_channels, kernel_size=(3, 3), stride=(2, 2,), padding=1),
+            nn.BatchNorm2d(out_channels),
+            nn.ReLU(inplace=True),
+            nn.Conv2d(out_channels, out_channels, kernel_size=(3, 3), padding=1),
+            nn.BatchNorm2d(out_channels),
+            nn.ReLU(inplace=True)
+        )
+
+    def upconv(self, in_channels, out_channels):
+        return nn.Sequential(
+            nn.Upsample(scale_factor=2),
+            nn.Conv2d(out_channels, out_channels, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1)),
+            nn.BatchNorm2d(out_channels),
+            nn.ReLU(inplace=True),
+        )
+
+    def deconv_block(self, input_filters, output_filters):
+        return nn.Sequential(
+            nn.ConvTranspose2d(input_filters, output_filters, kernel_size=(3, 3), stride=(2, 2), padding=(1, 1),
+                               output_padding=(1, 1)),
+            nn.Conv2d(output_filters, output_filters, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))
+        )
+
+    def forward(self, x):
+        connections = []
+        for channel in self.hidden_channels:
+            conv = getattr(self, "convblock_{}_{}".format(x.size(1), channel))
+            x = conv(x)
+            connections.insert(0, x)
+        x = self.lineal(x)
+        # LINEAL TO hidden
+        mu, log_var = torch.chunk(x, 2, dim=-1)
+        z = reparameterize(mu, log_var)
+        # DIM TO OUTPUT
+        z = self.deslineal(z)
+
+        z = z.reshape(z.size(0), 1024, 8, 8)
+        z = self.upsample(z)
+        x = z + connections[0]
+        for connection, channel in zip(connections[1:], reversed(self.hidden_channels[:-1])):
+            deconv = getattr(self, "deconvblock_{}_{}".format(x.size(1),channel))
+            x = deconv(x)
+            x += connection
+        conv = getattr(self, "deconvblock_{}".format(self.output_channel))
+        x = conv(x)
+        x = self.final(x)
+        return x, mu, log_var
 
 
 def get_model(config: Train, device):
@@ -80,13 +115,17 @@ def get_model(config: Train, device):
 
 
 MODELS = {
-    "DSen2-CR": ResnetStackedArchitecture
+    "Vanessa": Vanessa
 }
 
-if __name__ == '__main__':
-    net = ResnetStackedArchitecture(15, 13)
+
+def test_vae():
+    net = Vanessa(15, [128, 512, 1024], 13, 13)
     t = torch.Tensor(1, 15, 256, 256)
-    res = net(t)
-    print(res.shape)
-    num_model_parameters = sum([p.numel() for p in net.parameters()])
-    print(num_model_parameters)
+    output, mu, log_var = net(t)
+    print(output.shape, mu.shape, log_var.shape)
+
+
+
+if __name__ == '__main__':
+    test_vae()

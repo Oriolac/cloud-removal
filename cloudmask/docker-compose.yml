@@ -1,13 +1,17 @@
 version: "3.8"
 
 services:
-  eda:
+  laclasse-cloudmask:
     build:
       context: ./
       dockerfile: Dockerfile
-    container_name: laclasse-cr-eda
-    command: python -m eda /extraction --output /output
+    container_name: laclasse-cloudmask-container
+    image: laclasse-cloudmask:latest
+    shm_size: '50gb'
+    command: python main.py /inputs/ /data/ /data/masks/
     tty: true
     volumes:
-      - /data/docker/volumes/laclasse/SEN12MS-CR/:/extraction
-      - /data/docker/volumes/laclasse/SEN12MS-CR-EDA/:/output
+      - /data/docker/volumes/laclasse/SEN12MS-CR/:/data
+      - /data/docker/volumes/laclasse/inputs/augmented/:/inputs
+    labels:
+      maintainer: "oriol.alas@eurecat.org"

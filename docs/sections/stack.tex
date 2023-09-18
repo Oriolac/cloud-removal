@@ -1,0 +1,39 @@
+The choice of tools, frameworks, and libraries plays a critical role in facilitating research, ensuring reproducibility, optimizing model performance and a great user experience for the metrics visualization. This section delves into the core technological stack employed in the master's thesis for the model training pipeline. \cite{cloud-removal-tfm}
+\\
+\\
+Regarding the architecture design and backend for the training, it has been decided to be \texttt{PyTorch}. It is an open-source deep learning platform that offers a flexible way to define and train neural networks. Its flexible way to define and train neural network, its idiomatically code written in python and the experience of mine in this library were the main reasons why \texttt{PyTorch} was chosen. Moreover, the library carries with a lot of internal and third-party libraries to help developers to build more advanced and deep techniques. In our case, \texttt{Torchvision}, offered a collection of model architectures, and image transformations for computer vision that make easier to work with image data by providing this essential utilities. Other third party libraries were used such as \texttt{torch-sssim} to build some specific losses and metrics. Another library in the \texttt{PyTorch} ecosystem is \texttt{diffusers}, which integrates \texttt{PyTorch} as a backend for designing and developing \gls{ddm}.
+\\
+\\
+Managing the machine learning lifecycle and ensuring that the experiments are not just cutting-edge but also traceable and reproducible were also objectives to take into account the runs visualization. \texttt{Tensorboard} was the first library thought. Nevertheless, although it is enough to see the results of the current run, it does not inherent explicitly the reproduction of models and an efficient interface. Otherwise, \texttt{MLFlow} includes tools for tracking experiments, packaging code into reproducible runs, and sharing and deploying models, so, finally, it became the one used for tracking the model behaviour and manage the models learning lifecycle.
+\\
+\\
+Other libraries were used such as \texttt{Scikit-image}, which is a collection of algorithms for image processing built on top of the Python scientific stack. It's an extension of \texttt{Scikit-learn}, a popular machine learning library in Python. \texttt{Scikit-image} provides versatile tools for image processing and is interoperable with other Python scientific libraries.
+\\
+\\
+So as to save the configuration of the models and a more automatic way to gridsearch the models and hyper-parameters of the models, it has been created a library of training, which by reading a configuration file in \texttt{yaml}, it gets the parameters of the models, the information of the dataset and their properties, and the settings of the hyperparameters.
+\\
+\\
+The training runs and the experiments have been executed in a machine. The machine specifications are shown in the following table \ref{tab:training-specs}.
+
+Although this part was a bit challenging, the most difficult part was stabilizing the training. Due to the experience of large batches in \gls{gan}s, it has been preferred not to use batches\footnote{The batch size has been set to 1.}. In that way, the training was easy to see when the discriminator outdoes and when fails to discern. In this regard, \texttt{MLFlow} proved instrumental worthwhile in discerning the performance of the discriminator throughout each turn of the loop. To achieve this, metrics such as the fake score and the real score were generated both before and after discriminator training. This approach allowed for a clear visualization of the discriminator's progress, showing the gains and losses at each batch iteration.
+\\
+\\
+The real score, sometimes referred to as the "realness score" or "real data score," is the output of the discriminator when it evaluates real data samples from the training dataset. Conversely, the fake score represents the output of the discriminator when it assesses generated data samples produced by the generator. It indicates how convincingly the discriminator believes that the input is fake or generated data.  The goal is to achieve a balance where the generator produces data that is indistinguishable from real data, resulting in both high real and fake scores, and making it challenging for the discriminator to differentiate between real and fake samples.
+\\
+\\
+Although keeping a small batch size helped sometimes, when the batch size is that small, the learning from the inference done increases. To prevent overfitting in the network during the initial epoch and to manage the magnitude of the weights, the learning rate of the optimizers, particularly that of the discriminator, was significantly reduced. This precaution was taken because, at the beginning, the discriminator can easily distinguish between real and fake data samples. Although the learning rate has been reduced dramatically, the weight decay is higher than generator's, since it needs some way to outdo it.
+\\
+\\
+Finally, to assist the generative model in its initial iterations, it is added the \gls{mse} to the loss function. This addition enabled the generative model to orient itself, enhance training stability, and maintain a clear focus on addressing the core problem.
+
+\begin{table}[H]
+	\caption{Specifications of the machine}
+	\label{tab:training-specs}
+	\centering
+	\begin{tabular}{l|r}
+		Attribute & Value\\\hline
+		CPU & 32 Intel(R) Xeon(R) Gold 6226R CPU @ 2.90GHz\\
+		RAM &512 GB\\
+		GPU & 2 NVIDIA GeForce RTX 3090
+	\end{tabular}
+\end{table}

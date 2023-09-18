@@ -1,0 +1,28 @@
+seed: 42
+gpu: 0
+data:
+  dataset: S1_2_CR_Data
+  root_imgs: /data/
+  input: /inputs/single/
+  batch_size: 72
+  num_workers: 24
+train:
+  model:
+    name: Vanessa
+    kwargs:
+      input_channel: 15
+      output_channel: 13
+      hidden_channels: [128, 512, 1024]
+      latent_dim: 4
+  start_epoch: 1
+  epochs: 2000
+  checkpoint:
+    path: models/
+    model: Vanessa
+  criterion: MSELoss
+  optimizer:
+    name: Adam
+    kwargs:
+      lr: 0.000001
+      weight_decay: 0.00005
+      betas: [0.9, 0.999]

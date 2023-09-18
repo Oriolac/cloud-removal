@@ -3,7 +3,7 @@ gpu: 1
 data:
   dataset: S1_2_CR_Data
   root_imgs: /data/
-  input: /inputs/single/
+  input: /inputs/augmented/
   batch_size: 12
   num_workers: 24
 train:

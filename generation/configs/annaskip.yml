@@ -1,14 +1,14 @@
 seed: 42
-gpu: 0
+gpu: 1
 data:
   dataset: S1_2_CR_Data
   root_imgs: /data/
   input: /inputs/single/
-  batch_size: 12
+  batch_size: 24
   num_workers: 24
 train:
   model:
-    name: Anna
+    name: AnnaSkip
     kwargs:
       input_channel: 15
       output_channel: 13

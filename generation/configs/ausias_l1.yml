@@ -17,7 +17,7 @@ train:
   checkpoint:
     path: models/
     model: Ausias
-  criterion: MSELoss
+  criterion: L1Loss
   optimizer:
     name: Adam
     kwargs:
